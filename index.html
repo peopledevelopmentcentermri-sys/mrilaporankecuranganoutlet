@@ -1,0 +1,2889 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-bumi-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MRI Whistle Blowing System ( MRI WBS )</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts Plus Jakarta Sans & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rempah: {
+                            50: '#FDFBF7',
+                            100: '#F7F0E3',
+                            200: '#EBDCBF',
+                            300: '#DEC496',
+                            400: '#CFA76B',
+                            500: '#B8863B',
+                            600: '#94652A',
+                            700: '#70461C',
+                            800: '#4D2D10',
+                            900: '#2E1906',
+                        },
+                        bumi: {
+                            50: '#FAF8F5',
+                            100: '#F4EFE6',
+                            200: '#E6DCCF',
+                            300: '#D5C4B1',
+                            400: '#BFA68E',
+                            500: '#A4866C',
+                            600: '#84664F',
+                            700: '#674D3B',
+                            800: '#4C3729',
+                            900: '#33231A'
+                        },
+                        kunyit: {
+                            50: '#FFFBEB',
+                            100: '#FEF3C7',
+                            200: '#FDE68A',
+                            300: '#FCD34D',
+                            400: '#FBBF24',
+                            500: '#F59E0B',
+                            600: '#D97706',
+                            700: '#B45309',
+                            800: '#92400E',
+                            900: '#78350F',
+                            950: '#451A03'
+                        },
+                        botanical: {
+                            50: '#F0FDF4',
+                            100: '#DCFCE7',
+                            200: '#BBF7D0',
+                            600: '#16A34A',
+                            700: '#15803D',
+                            800: '#166534',
+                            900: '#14532D'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    screens: {
+                        'xs': '400px',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #FAF8F5;
+            color: #1E293B;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .glass-panel-light {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .glass-card-amber {
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFFDF7 100%);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F1F5F9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .pulse-active {
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col justify-between selection:bg-kunyit-400 selection:text-kunyit-900 bg-bumi-50 overflow-x-hidden">
+
+    <header class="bg-white/95 backdrop-blur-md sticky top-0 z-40 shadow-sm border-b border-amber-200/80">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
+                <!-- Brand / Logo -->
+                <div class="flex items-center gap-2.5 sm:gap-3 cursor-pointer shrink-0" onclick="switchTab('dashboard')">
+                    <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-kunyit-400 via-kunyit-500 to-kunyit-600 flex items-center justify-center text-white shadow-md shadow-kunyit-500/20 font-extrabold text-base sm:text-lg">
+                        <i class="fa-solid fa-mortar-pestle"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-black text-base sm:text-lg tracking-tight text-kunyit-900 leading-none">MRI WBS</span>
+                            <span class="bg-kunyit-100 text-kunyit-800 text-[9px] px-1.5 py-0.5 rounded-full font-extrabold tracking-widest border border-kunyit-300">V1.0</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500 font-semibold hidden sm:block">Whistle Blowing System</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Nav Buttons (Clean, Compact, No Wrapping) -->
+                <nav class="hidden lg:flex items-center space-x-1.5 whitespace-nowrap">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 bg-kunyit-500 text-white shadow-sm">
+                        <i class="fa-solid fa-house"></i> Utama
+                    </button>
+                    <button onclick="switchTab('lapor')" id="nav-lapor" class="nav-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 text-slate-700 hover:text-kunyit-900 hover:bg-amber-50">
+                        <i class="fa-solid fa-paper-plane text-kunyit-600"></i> Buat Laporan
+                    </button>
+                    <button onclick="switchTab('lacak')" id="nav-lacak" class="nav-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 text-slate-700 hover:text-kunyit-900 hover:bg-amber-50">
+                        <i class="fa-solid fa-magnifying-glass text-kunyit-600"></i> Lacak Tiket
+                    </button>
+                    <button onclick="switchTab('apresiasi')" id="nav-apresiasi" class="nav-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 text-slate-700 hover:text-kunyit-900 hover:bg-amber-50">
+                        <i class="fa-solid fa-gift text-kunyit-600"></i> Reward & Proteksi
+                    </button>
+                </nav>
+
+                <!-- Status & Portal Mode Switcher -->
+                <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                    <!-- Live Firebase Status Indicator -->
+                    <div class="hidden xl:flex items-center gap-2 bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-emerald-200 text-[11px]">
+                        <span id="firebase-status-dot" class="w-2 h-2 rounded-full bg-botanical-600 pulse-active"></span>
+                        <span id="firebase-status-text" class="font-bold text-emerald-800 whitespace-nowrap">Connected</span>
+                    </div>
+
+                    <!-- Role Switcher Dropdown (Integrated Mode Portal) -->
+                    <div class="flex items-center gap-1.5 bg-amber-50/80 px-2.5 py-1.5 rounded-xl border border-amber-200 text-xs">
+                        <i class="fa-solid fa-user-shield text-kunyit-700 text-xs hidden md:inline"></i>
+                        <select id="user-role-selector" onchange="handleRoleSelectChange(this.value)" class="bg-white text-kunyit-900 font-bold outline-none cursor-pointer rounded-lg px-2 py-1 border border-amber-300 text-xs shadow-sm">
+                            <option value="karyawan">👥 Portal Pelapor</option>
+                            <option value="direksi">🔒 Portal Direksi</option>
+                            <option value="spi">🔒 Panel Audit SPI</option>
+                        </select>
+                    </div>
+
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu Mobile" class="lg:hidden text-slate-700 hover:text-slate-900 p-2 rounded-xl hover:bg-amber-100 transition-colors">
+                        <i class="fa-solid fa-bars text-lg sm:text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown Drawer -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-amber-200 px-3 pt-2 pb-4 space-y-1.5 shadow-lg">
+            <div class="p-2 bg-amber-50 rounded-xl mb-2 flex items-center justify-between text-xs sm:hidden">
+                <span class="font-bold text-slate-700">Mode Portal:</span>
+                <select id="user-role-selector-mobile" onchange="handleRoleSelectChange(this.value)" class="bg-white text-kunyit-900 font-bold outline-none cursor-pointer rounded px-2 py-1 border border-amber-300 text-xs">
+                    <option value="karyawan">👥 Portal Pelapor</option>
+                    <option value="direksi">🔒 Portal Direksi</option>
+                    <option value="spi">🔒 Panel Audit SPI</option>
+                </select>
+            </div>
+
+            <button onclick="switchTab('dashboard'); toggleMobileMenu();" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-kunyit-900 hover:bg-amber-50 flex items-center gap-3">
+                <i class="fa-solid fa-house text-kunyit-600 w-5 text-center"></i> Utama
+            </button>
+            <button onclick="switchTab('lapor'); toggleMobileMenu();" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-amber-50 flex items-center gap-3">
+                <i class="fa-solid fa-paper-plane text-kunyit-600 w-5 text-center"></i> Buat Laporan Baru
+            </button>
+            <button onclick="switchTab('lacak'); toggleMobileMenu();" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-amber-50 flex items-center gap-3">
+                <i class="fa-solid fa-magnifying-glass text-kunyit-600 w-5 text-center"></i> Lacak Tiket
+            </button>
+            <button onclick="switchTab('apresiasi'); toggleMobileMenu();" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-amber-50 flex items-center gap-3">
+                <i class="fa-solid fa-gift text-kunyit-600 w-5 text-center"></i> Reward & Proteksi Pelapor
+            </button>
+            <button onclick="requestProtectedTab('direksi'); toggleMobileMenu();" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-amber-50 flex items-center gap-3">
+                <i class="fa-solid fa-lock text-kunyit-600 w-5 text-center"></i> Portal Direksi
+            </button>
+            <button onclick="requestProtectedTab('investigasi'); toggleMobileMenu();" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-amber-50 flex items-center gap-3">
+                <i class="fa-solid fa-lock text-kunyit-600 w-5 text-center"></i> Panel Audit SPI
+            </button>
+        </div>
+    </header>
+
+    <!-- TOAST NOTIFICATION HOLDER -->
+    <div id="toast-container" class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 flex-grow w-full space-y-6 sm:space-y-8">
+
+        <!-- TAB 1: DASHBOARD UTAMA PELAPOR -->
+        <section id="tab-dashboard" class="tab-content space-y-5 sm:space-y-6">
+            
+            <!-- Realtime Day, Date & Clock Header Widget -->
+            <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-amber-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-100 text-kunyit-800 flex items-center justify-center font-bold text-base sm:text-lg shrink-0">
+                        <i class="fa-regular fa-clock"></i>
+                    </div>
+                    <div>
+                        <span class="text-[9px] sm:text-[10px] font-extrabold text-kunyit-800 uppercase tracking-widest block">Waktu Sistem Server (WIB)</span>
+                        <h3 id="realtime-clock-display" class="text-xs sm:text-sm lg:text-base font-black text-slate-900 font-mono">Kamis, 8 Oktober 2026 - 10:46:00 WIB</h3>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 self-start sm:self-auto w-full sm:w-auto">
+                    <button onclick="enableBrowserNotifications()" class="w-full sm:w-auto text-xs bg-amber-50 hover:bg-amber-100 text-kunyit-900 font-bold px-3 py-2 rounded-xl border border-kunyit-300 transition-all flex items-center justify-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-bell text-kunyit-700"></i> Aktifkan Push Notification SPI
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hero Section -->
+            <div class="relative rounded-2xl sm:rounded-3xl p-5 sm:p-8 bg-gradient-to-r from-kunyit-100 via-amber-50 to-rempah-100 border border-kunyit-200 shadow-md overflow-hidden">
+                <div class="relative z-10 max-w-3xl space-y-3.5 sm:space-y-4">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="inline-flex items-center gap-1.5 bg-botanical-100 text-botanical-800 text-[10px] sm:text-xs px-2.5 sm:px-3 py-1 rounded-full border border-botanical-200 font-bold">
+                            <i class="fa-solid fa-user-shield text-botanical-700"></i> Proteksi Identitas Pelapor 100% Terjamin
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 bg-kunyit-200 text-kunyit-900 text-[10px] sm:text-xs px-2.5 sm:px-3 py-1 rounded-full border border-kunyit-300 font-bold">
+                            <i class="fa-solid fa-gift text-kunyit-800"></i> Program Apresiasi Integritas Pelapor
+                        </span>
+                    </div>
+
+                    <h1 class="text-xl sm:text-3xl lg:text-4xl font-black text-kunyit-950 tracking-tight leading-tight">
+                        MRI Whistle Blowing System
+                    </h1>
+                    <p class="text-slate-700 text-xs sm:text-sm leading-relaxed font-medium">
+                        Sampaikan laporan kecurangan, penggelapan kasir, manipulasi stok bahan baku, atau pelanggaran SOP di seluruh Cabang Outlet secara aman & terenkripsi langsung ke Satuan Pengawas Internal (SPI)
+                    </p>
+
+                    <!-- UNIFIED ACTION BUTTONS GRID -->
+                    <div class="max-w-xl space-y-2.5 pt-2">
+                        <button onclick="switchTab('lapor')" class="w-full bg-gradient-to-r from-kunyit-500 via-kunyit-600 to-kunyit-700 hover:from-kunyit-600 hover:to-kunyit-800 text-white font-black text-sm sm:text-base px-6 py-3.5 rounded-xl transition-all duration-200 shadow-md shadow-kunyit-500/30 hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2.5 border border-amber-300/60">
+                            <span class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center text-sm shadow-inner">
+                                <i class="fa-solid fa-paper-plane text-white"></i>
+                            </span>
+                            <span class="tracking-wide">🚨 Buat Laporan Baru Sekarang</span>
+                        </button>
+
+                        <div class="grid grid-cols-1 xs:grid-cols-2 gap-2.5">
+                            <button onclick="switchTab('apresiasi')" class="w-full bg-white hover:bg-amber-50 text-kunyit-900 border border-kunyit-300 py-3 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
+                                <i class="fa-solid fa-calculator text-kunyit-600"></i> Hitung Estimasi Reward
+                            </button>
+                            <button onclick="switchTab('kebijakan')" class="w-full bg-botanical-700 hover:bg-botanical-800 text-white py-3 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
+                                <i class="fa-solid fa-shield-halved"></i> Kebijakan Proteksi Pelapor
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROMINENT HOME QUICK TICKET STATUS CHECKER -->
+            <div class="glass-card-amber p-4 sm:p-8 rounded-2xl sm:rounded-3xl border-2 border-kunyit-400 shadow-lg bg-white space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-amber-200">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-kunyit-500 text-white flex items-center justify-center font-black text-lg sm:text-xl shadow-md shadow-kunyit-500/20 shrink-0">
+                            <i class="fa-solid fa-magnifying-glass-chart"></i>
+                        </div>
+                        <div>
+                            <span class="text-[9px] sm:text-[10px] font-extrabold text-kunyit-800 uppercase tracking-widest block">Layanan Cepat Pelapor</span>
+                            <h2 class="text-lg sm:text-2xl font-black text-kunyit-950">Cek Status Perkembangan Laporan Anda</h2>
+                            <p class="text-[11px] sm:text-xs text-slate-500">Masukkan kode tiket unik untuk melihat ringkasan status dari Tim SPI</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <form onsubmit="handleQuickHomeStatusCheck(event)" class="flex flex-col sm:flex-row gap-2.5 sm:gap-3 max-w-2xl">
+                        <div class="relative flex-1">
+                             <input type="text" id="quick-ticket-input" placeholder="Kode Tiket (Contoh: MRI-WB-2026-1082)" required class="w-full pl-9 text-xs sm:text-sm bg-amber-50/50 border border-kunyit-300 rounded-xl p-3 sm:p-3.5 text-kunyit-950 font-mono font-bold uppercase outline-none focus:ring-2 focus:ring-kunyit-500">
+                        </div>
+                        <button type="submit" class="bg-kunyit-500 hover:bg-kunyit-600 text-white font-extrabold text-xs sm:text-sm px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-search"></i> Cek Status
+                        </button>
+                    </form>
+
+                    <!-- Quick Status Display Card -->
+                    <div id="quick-status-display" class="hidden bg-amber-50/60 p-4 sm:p-5 rounded-2xl border border-kunyit-200 space-y-3.5 transition-all duration-300">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-kunyit-200 pb-3">
+                            <div>
+                                <span id="quick-res-code" class="text-base sm:text-lg font-black text-kunyit-800 font-mono">MRI-WB-2026-XXXX</span>
+                                <h4 id="quick-res-title" class="text-xs font-bold text-slate-800 mt-0.5">Judul Laporan</h4>
+                            </div>
+                            <div id="quick-res-status-badge"></div>
+                        </div>
+
+                        <!-- Status Stepper Bar -->
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between text-[11px] font-bold text-slate-600">
+                                <span>Progress Audit & Tindak Lanjut SPI:</span>
+                                <span id="quick-res-percent-text" class="text-kunyit-700 font-mono">25%</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden border border-slate-300">
+                                <div id="quick-res-progress-bar" class="bg-gradient-to-r from-kunyit-500 to-botanical-600 h-full transition-all duration-500" style="width: 25%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Status Summary Box -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 text-xs bg-white p-3.5 rounded-xl border border-amber-200 shadow-sm">
+                            <div>
+                                <span class="text-slate-500 block font-medium">Cabang Outlet:</span>
+                                <span id="quick-res-outlet" class="font-bold text-slate-800">MRI Dipatiukur</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500 block font-medium">Kategori Loss:</span>
+                                <span id="quick-res-category" class="font-bold text-slate-800">Penggelapan Kasir</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500 block font-medium">Catatan Terakhir SPI:</span>
+                                <span id="quick-res-last-note" class="font-bold text-botanical-700 truncate block">Laporan diterima oleh sistem.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Info Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-4">
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-amber-200 shadow-sm space-y-2">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-botanical-100 text-botanical-700 flex items-center justify-center font-bold text-base sm:text-lg">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-xs sm:text-sm">Kerahasiaan 100% Terjamin</h3>
+                    <p class="text-[11px] sm:text-xs text-slate-600 leading-relaxed">
+                        Sistem tidak pernah mencatat IP address atau identitas perangkat Anda saat memilih laporan anonim.
+                    </p>
+                </div>
+
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-amber-200 shadow-sm space-y-2">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-kunyit-100 text-kunyit-800 flex items-center justify-center font-bold text-base sm:text-lg">
+                        <i class="fa-solid fa-gift"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-xs sm:text-sm">Reward Transparansi</h3>
+                    <p class="text-[11px] sm:text-xs text-slate-600 leading-relaxed">
+                        Dapatkan apresiasi finansial hingga 15% dari total kerugian perusahaan yang berhasil Anda selamatkan.
+                    </p>
+                </div>
+
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-amber-200 shadow-sm space-y-2 sm:col-span-2 md:col-span-1">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-base sm:text-lg">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-800 text-xs sm:text-sm">Chat Dua Arah Tanpa Nama</h3>
+                    <p class="text-[11px] sm:text-xs text-slate-600 leading-relaxed">
+                        Diskusikan bukti tambahan secara langsung dengan Tim Audit SPI tanpa perlu mengungkapkan nama asli Anda.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-direksi" class="tab-content hidden space-y-5 sm:space-y-6">
+            <div class="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-amber-200 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <span class="inline-flex items-center gap-1.5 bg-kunyit-100 text-kunyit-900 text-[10px] sm:text-xs px-2.5 sm:px-3 py-1 rounded-full font-bold border border-kunyit-300">
+                        <i class="fa-solid fa-chart-line"></i> Restricted Access - Board of Directors & Internal Audit
+                    </span>
+                    <h2 class="text-lg sm:text-2xl font-black text-kunyit-950 mt-2">Executive Analytics & Deep Loss Matrix</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Pemantauan risiko kerugian finansial, tren indikasi fraud, dan efisiensi recovery aset outlet</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="openManageOutletsModal()" class="bg-kunyit-500 hover:bg-kunyit-600 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition-all shadow-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-store"></i> Kelola Outlet
+                    </button>
+                    <button onclick="openManageCategoriesModal()" class="bg-kunyit-500 hover:bg-kunyit-600 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition-all shadow-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-check"></i> Kelola Kategori
+                    </button>
+                    <button onclick="openWebhookSettingsModal()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition-all shadow-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-bell"></i> Seting Webhook & AI
+                    </button>
+                    <button onclick="exportReportsCSV()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-xl border border-slate-300 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-csv text-botanical-700"></i> Unduh CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- Firebase Storage Quota Widget -->
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-amber-200 shadow-sm space-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-database text-kunyit-600 text-base"></i>
+                        <h4 class="font-bold text-slate-900 text-xs sm:text-sm">Status Penyimpanan Realtime Firebase Firestore</h4>
+                    </div>
+                    <span id="firebase-storage-badge" class="bg-botanical-100 text-botanical-800 text-[10px] px-2.5 py-0.5 rounded-full font-mono font-bold self-start sm:self-auto">Kapasitas Aman (Free Tier Active)</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-xs">
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[11px]">
+                            <span class="text-slate-500 font-semibold">Total Dokumen Laporan:</span>
+                            <span id="quota-doc-count" class="font-bold text-slate-800 font-mono">0 / 50.000 Docs</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
+                            <div id="quota-doc-bar" class="bg-kunyit-500 h-full" style="width: 1%"></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[11px]">
+                            <span class="text-slate-500 font-semibold">Estimasi Payload Data:</span>
+                            <span id="quota-payload-size" class="font-bold text-slate-800 font-mono">0.02 MB / 1024 MB</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
+                            <div id="quota-payload-bar" class="bg-botanical-600 h-full" style="width: 1%"></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[11px]">
+                            <span class="text-slate-500 font-semibold">Status Sync Realtime:</span>
+                            <span id="quota-sync-speed" class="font-bold text-botanical-700 font-mono">Aktif (0ms Latency)</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
+                            <div class="bg-blue-600 h-full" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metric KPI Grid -->
+            <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+                <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border-l-4 border-l-red-500 border border-slate-200">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500">Estimasi Total Kerugian</p>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center font-black text-sm sm:text-base">
+                            <i class="fa-solid fa-rupiah-sign"></i>
+                        </div>
+                    </div>
+                    <h3 id="stat-total-loss" class="text-xl sm:text-2xl font-black text-slate-900 mt-2 font-mono">Rp 0</h3>
+                    <p class="text-[11px] sm:text-xs text-slate-500 mt-1"><span id="stat-loss-count" class="font-bold text-red-600">0</span> insiden terakumulasi</p>
+                </div>
+
+                <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border-l-4 border-l-botanical-600 border border-slate-200">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500">Aset Berhasil Diselamatkan</p>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-botanical-100 text-botanical-700 flex items-center justify-center font-black text-sm sm:text-base">
+                            <i class="fa-solid fa-hand-holding-dollar"></i>
+                        </div>
+                    </div>
+                    <h3 id="stat-recovered-loss" class="text-xl sm:text-2xl font-black text-botanical-700 mt-2 font-mono">Rp 0</h3>
+                    <p class="text-[11px] sm:text-xs text-slate-500 mt-1">Hasil pengembalian & koreksi SPI</p>
+                </div>
+
+                <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border-l-4 border-l-kunyit-500 border border-slate-200">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500">Kasus Diinvestigasi</p>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-kunyit-100 text-kunyit-800 flex items-center justify-center font-black text-sm sm:text-base">
+                            <i class="fa-solid fa-magnifying-glass-chart"></i>
+                        </div>
+                    </div>
+                    <h3 id="stat-investigating" class="text-xl sm:text-2xl font-black text-slate-900 mt-2 font-mono">0</h3>
+                    <p class="text-[11px] sm:text-xs text-kunyit-700 font-medium mt-1">Dalam audit fisik lapangan</p>
+                </div>
+
+                <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border-l-4 border-l-blue-500 border border-slate-200">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500">Total Laporan Masuk</p>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-black text-sm sm:text-base">
+                            <i class="fa-solid fa-folder-open"></i>
+                        </div>
+                    </div>
+                    <h3 id="stat-total-reports" class="text-xl sm:text-2xl font-black text-slate-900 mt-2 font-mono">0</h3>
+                    <p class="text-[11px] sm:text-xs text-slate-500 mt-1">Laporan seluruh cabang outlet</p>
+                </div>
+            </div>
+
+            <!-- Analytics Visual Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                <!-- Chart 1: Loss by Outlet -->
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-amber-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-xs sm:text-base">Sebaran Nominal Kerugian per Outlet</h3>
+                            <p class="text-[11px] sm:text-xs text-slate-500">Cabang outlet dengan indikasi kerugian tertinggi</p>
+                        </div>
+                        <span class="bg-amber-100 text-kunyit-900 text-[10px] sm:text-xs px-2.5 py-1 rounded-lg font-mono font-bold">Bar Chart</span>
+                    </div>
+                    <div class="h-56 sm:h-64 relative">
+                        <canvas id="chartOutletLoss"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Category Breakdown -->
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-amber-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-xs sm:text-base">Kategori Indikasi Fraud & Loss</h3>
+                            <p class="text-[11px] sm:text-xs text-slate-500">Persentase modus operandi terdeteksi</p>
+                        </div>
+                        <span class="bg-botanical-100 text-botanical-800 text-[10px] sm:text-xs px-2.5 py-1 rounded-lg font-mono font-bold">Doughnut</span>
+                    </div>
+                    <div class="h-56 sm:h-64 relative flex items-center justify-center">
+                        <canvas id="chartCategoryBreakdown"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EXECUTIVE MATRIX DEEP ANALYSIS -->
+            <div class="bg-white rounded-2xl sm:rounded-3xl border border-amber-200 shadow-md p-4 sm:p-6 space-y-4 sm:space-y-5">
+                <div class="flex flex-col xs:flex-row xs:items-center justify-between border-b border-slate-100 pb-3 gap-2">
+                    <div>
+                        <span class="text-[9px] sm:text-[10px] font-extrabold text-kunyit-800 uppercase tracking-widest block">In-Depth Risk Profiling</span>
+                        <h3 class="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-ranking-star text-kunyit-600"></i> Matriks Analisis Mendalam & Peringkat Kerentanan Kasus
+                        </h3>
+                    </div>
+                    <span class="bg-kunyit-100 text-kunyit-900 text-[10px] sm:text-xs px-2.5 py-1 rounded-full font-bold self-start xs:self-auto">Auto-Rank Engine</span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                    <div class="space-y-2.5">
+                        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-triangle-exclamation text-red-500"></i> Peringkat Modus Pelanggaran Tersering
+                        </h4>
+                        <div class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-2xl">
+                            <table class="w-full text-left text-xs min-w-[340px]">
+                                <thead class="bg-amber-50 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-200">
+                                    <tr>
+                                        <th class="py-2.5 px-3">Peringkat & Kategori</th>
+                                        <th class="py-2.5 px-3 text-center">Jumlah Kasus</th>
+                                        <th class="py-2.5 px-3 text-right">Total Kerugian</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="matrix-frequent-categories" class="divide-y divide-slate-100 text-slate-800"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2.5">
+                        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-store-slash text-kunyit-700"></i> Peringkat Outlet Paling Rentan Loss
+                        </h4>
+                        <div class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-2xl">
+                            <table class="w-full text-left text-xs min-w-[340px]">
+                                <thead class="bg-amber-50 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-200">
+                                    <tr>
+                                        <th class="py-2.5 px-3">Outlet</th>
+                                        <th class="py-2.5 px-3 text-center">Frekuensi</th>
+                                        <th class="py-2.5 px-3 text-right">Aset Diselamatkan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="matrix-top-outlets" class="divide-y divide-slate-100 text-slate-800"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Executive Quick Feed Table -->
+            <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-amber-200">
+                <div class="p-4 sm:p-5 border-b border-slate-200 flex flex-col xs:flex-row xs:items-center justify-between gap-2 bg-amber-50/50">
+                    <h3 class="font-bold text-slate-900 text-xs sm:text-base flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-kunyit-600"></i> Ikhtisar Laporan Terbaru Untuk Direksi
+                    </h3>
+                    <button onclick="switchTab('investigasi')" class="text-xs text-kunyit-800 hover:text-kunyit-900 font-bold flex items-center gap-1">
+                        Ke Panel Detail SPI Audit <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left text-xs min-w-[640px]">
+                        <thead class="bg-slate-100 text-slate-600 font-semibold uppercase tracking-wider border-b border-slate-200">
+                            <tr>
+                                <th class="py-3 px-4">No. Tiket</th>
+                                <th class="py-3 px-4">Tanggal</th>
+                                <th class="py-3 px-4">Outlet</th>
+                                <th class="py-3 px-4">Kategori Pelanggaran</th>
+                                <th class="py-3 px-4">Estimasi Kerugian</th>
+                                <th class="py-3 px-4">Status</th>
+                                <th class="py-3 px-4 text-center">Tindakan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboard-recent-table" class="divide-y divide-slate-200 text-slate-700"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-lapor" class="tab-content hidden max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl sm:rounded-3xl shadow-lg border border-amber-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-kunyit-500 via-amber-500 to-rempah-600 p-5 sm:p-8 text-white">
+                    <div class="flex items-center gap-3.5 sm:gap-4">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white text-kunyit-800 flex items-center justify-center font-black text-lg sm:text-xl shadow-md shrink-0">
+                            <i class="fa-solid fa-pen-nib"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg sm:text-2xl font-extrabold text-white">Formulir Laporan Kejadian & Kebocoran Outlet</h2>
+                            <p class="text-[11px] sm:text-xs text-amber-100 mt-0.5">Identitas Anda terlindungi 100% oleh Kebijakan Whistleblower Minum Rempah Indonesia.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="whistleblow-form" onsubmit="handleFormSubmit(event)" class="p-4 sm:p-8 space-y-5 sm:space-y-6">
+                    <div class="bg-amber-50/60 border border-kunyit-200 rounded-2xl p-4 sm:p-5 space-y-3">
+                        <label class="block text-xs font-bold text-kunyit-900 uppercase tracking-wider">
+                            <i class="fa-solid fa-user-secret mr-1"></i> Pengaturan Proteksi Identitas Pelapor
+                        </label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <label class="flex items-start gap-3 p-3 sm:p-3.5 bg-white rounded-xl border border-amber-300 cursor-pointer hover:border-kunyit-500 transition-all shadow-sm">
+                                <input type="radio" name="anonimity" value="anonymous" checked onchange="toggleReporterInputs(true)" class="mt-1 text-kunyit-600 focus:ring-kunyit-500">
+                                <div>
+                                    <span class="block text-xs font-extrabold text-slate-900">100% Rahasia & Anonim</span>
+                                    <span class="text-[11px] text-slate-500 leading-tight block mt-0.5">Nama & kontak Anda tidak dicatat oleh sistem.</span>
+                                </div>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 sm:p-3.5 bg-white rounded-xl border border-amber-300 cursor-pointer hover:border-kunyit-500 transition-all shadow-sm">
+                                <input type="radio" name="anonimity" value="identified" onchange="toggleReporterInputs(false)" class="mt-1 text-kunyit-600 focus:ring-kunyit-500">
+                                <div>
+                                    <span class="block text-xs font-extrabold text-slate-900">Sertakan Identitas Pelapor</span>
+                                    <span class="text-[11px] text-slate-500 leading-tight block mt-0.5">Memudahkan Tim SPI verifikasi insentif imbalan.</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div id="reporter-fields" class="hidden pt-3 border-t border-amber-200 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Nama Lengkap</label>
+                                <input type="text" id="reporter_name" placeholder="Contoh: Budi Santoso" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-2.5 sm:p-3 text-slate-900 focus:ring-2 focus:ring-kunyit-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Nomor Whatsapp</label>
+                                <input type="text" id="reporter_contact" placeholder="Contoh: 081234567890" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-2.5 sm:p-3 text-slate-900 focus:ring-2 focus:ring-kunyit-500 outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                Outlet / Cabang Minum Rempah <span class="text-red-500">*</span>
+                            </label>
+                            <select id="outlet_location" required class="w-full text-xs bg-white border border-slate-300 rounded-xl p-3 text-slate-900 focus:ring-2 focus:ring-kunyit-500 outline-none shadow-sm font-semibold">
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                Tanggal & Waktu Kejadian <span class="text-red-500">*</span>
+                            </label>
+                            <input type="datetime-local" id="incident_date" required class="w-full text-xs bg-white border border-slate-300 rounded-xl p-3 text-slate-900 focus:ring-2 focus:ring-kunyit-500 outline-none shadow-sm font-medium">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                Kategori Pelanggaran / Loss <span class="text-red-500">*</span>
+                            </label>
+                            <select id="loss_category" required class="w-full text-xs bg-white border border-slate-300 rounded-xl p-3 text-slate-900 focus:ring-2 focus:ring-kunyit-500 outline-none shadow-sm font-medium">
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                Estimasi Nominal Kerugian (IDR) <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-2.5 sm:top-3 text-xs font-bold text-slate-500">Rp</span>
+                                <input type="number" id="estimated_loss" required min="0" step="5000" placeholder="0" oninput="updateFormLossFormatted()" class="w-full pl-9 text-xs bg-white border border-slate-300 rounded-xl p-3 text-slate-900 font-mono font-bold focus:ring-2 focus:ring-kunyit-500 outline-none shadow-sm">
+                            </div>
+                            <span id="loss-formatted-preview" class="text-[11px] text-botanical-700 font-mono font-bold mt-1 block">Rupiah: Rp 0</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                            Judul Singkat Laporan <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="report_title" required placeholder="Contoh: Modus Pembatalan Void Fiktif Kasir Shift Malam" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-3 text-slate-900 font-semibold focus:ring-2 focus:ring-kunyit-500 outline-none shadow-sm">
+                    </div>
+
+                    <div>
+                        <div class="flex flex-col xs:flex-row xs:items-center justify-between gap-1.5 mb-1">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                                Kronologi Kejadian Rinci <span class="text-red-500">*</span>
+                            </label>
+                            <button type="button" onclick="enhanceDescriptionWithAI()" class="text-[10px] sm:text-[11px] bg-amber-100 text-kunyit-900 border border-amber-300 px-2.5 py-1 rounded-lg font-bold hover:bg-amber-200 transition-all flex items-center justify-center gap-1.5 shadow-sm self-start xs:self-auto">
+                                <i class="fa-solid fa-wand-magic-sparkles text-kunyit-700"></i> AI Chronology Enhancer
+                            </button>
+                        </div>
+                        <textarea id="report_description" required rows="4" placeholder="Jelaskan secara rinci: Apa yang terjadi? Siapa oknum yang terlibat? Kapan jam kejadiannya? Bagaimana modus operandinya?" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-3 text-slate-900 leading-relaxed focus:ring-2 focus:ring-kunyit-500 outline-none shadow-sm"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                Pihak Terduga / Saksi (Opsional)
+                            </label>
+                            <input type="text" id="suspects_witnesses" placeholder="Contoh: Oknum Kasir A, Saksi: Barista Siang" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-3 text-slate-900 focus:ring-2 focus:ring-kunyit-500 outline-none shadow-sm">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                Opsi Voice Note (Rekaman Suara)
+                            </label>
+                            <button type="button" onclick="toggleVoiceRecorderDemo()" id="voice-recorder-btn" class="w-full text-xs bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 font-bold p-2.5 sm:p-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm">
+                                <i class="fa-solid fa-microphone text-red-500"></i> <span id="voice-rec-text">Sertakan Rekaman Laporan Lisan</span>
+                            </button>
+                            <span id="voice-status-lbl" class="text-[10px] text-slate-500 mt-1 block">Simulasi fitur transkripsi suara pelapor ke teks AI.</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                            Lampiran Bukti (Foto CCTV, Struk POS, Nota)
+                        </label>
+                        <div class="border-2 border-dashed border-amber-300 rounded-2xl p-4 text-center bg-amber-50/30 hover:bg-amber-50/80 transition-all relative">
+                            <input type="file" id="evidence_file" accept="image/*,.pdf" onchange="previewUploadedFile(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                            <div id="upload-placeholder">
+                                <i class="fa-solid fa-cloud-arrow-up text-2xl sm:text-3xl text-kunyit-600 mb-1"></i>
+                                <p class="text-xs font-bold text-slate-800">Klik atau Tarik Berkas Bukti ke Sini</p>
+                                <p class="text-[10px] text-slate-500 mt-0.5">Format: JPG, PNG, PDF (Maks. 5MB)</p>
+                            </div>
+                            <div id="upload-preview" class="hidden flex items-center justify-center gap-3">
+                                <i class="fa-solid fa-file-circle-check text-botanical-700 text-2xl"></i>
+                                <div class="text-left">
+                                    <span id="preview-filename" class="block text-xs font-bold text-slate-900">file.png</span>
+                                    <span class="text-[10px] text-botanical-700 font-bold">Bukti siap dienkripsi & dikirim</span>
+                                </div>
+                                <button type="button" onclick="clearUploadedFile(event)" class="text-red-500 text-xs hover:bg-red-50 p-2 rounded-lg ml-2">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3.5">
+                        <div class="flex items-center gap-2 text-[11px] sm:text-xs text-slate-600">
+                            <i class="fa-solid fa-lock text-botanical-700"></i> Data disalurkan langsung ke Server SPI dengan Enkripsi SSL
+                        </div>
+                        <button type="submit" id="submit-report-btn" class="w-full sm:w-auto bg-kunyit-500 hover:bg-kunyit-600 text-white font-extrabold px-6 sm:px-8 py-3.5 rounded-2xl transition-all shadow-md shadow-kunyit-500/30 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> Kirim Laporan Rahasia
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section id="tab-lacak" class="tab-content hidden max-w-4xl mx-auto space-y-5 sm:space-y-6">
+            <div class="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-md border border-amber-200 text-center space-y-3.5 sm:space-y-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-amber-100 text-kunyit-800 rounded-2xl flex items-center justify-center text-lg sm:text-xl mx-auto">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <h2 class="text-lg sm:text-xl font-extrabold text-kunyit-950">Lacak Perkembangan & Live Chat SPI</h2>
+                <p class="text-xs text-slate-600 max-w-md mx-auto">
+                    Masukkan kode tiket pelaporan unik Anda untuk memeriksa perkembangan audit serta berdiskusi secara langsung dengan Tim SPI.
+                </p>
+
+                <form onsubmit="searchTicketStatus(event)" class="flex flex-col sm:flex-row gap-2 max-w-lg mx-auto">
+                    <input type="text" id="track-ticket-input" placeholder="Kode Tiket (Contoh: MRI-WB-2026-1082)" required class="flex-1 text-xs bg-amber-50/50 border border-kunyit-300 rounded-xl p-3 sm:p-3.5 text-kunyit-950 font-mono font-extrabold tracking-wider uppercase outline-none focus:ring-2 focus:ring-kunyit-500">
+                    <button type="submit" class="bg-kunyit-500 hover:bg-kunyit-600 text-white font-extrabold px-6 py-3 sm:py-3.5 rounded-xl text-xs transition-all shadow-md flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-search"></i> Cek Status Tiket
+                    </button>
+                </form>
+            </div>
+
+            <div id="ticket-result-container" class="hidden bg-white rounded-2xl sm:rounded-3xl shadow-lg p-4 sm:p-8 space-y-5 sm:space-y-6 border border-amber-200">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 sm:pb-6 border-b border-slate-200 gap-3">
+                    <div>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Detail Laporan Terenkripsi</span>
+                        <h3 id="res-ticket-id" class="text-xl sm:text-2xl font-black text-kunyit-800 font-mono tracking-wider">MRI-WB-2026-8942</h3>
+                        <p id="res-ticket-title" class="text-xs sm:text-sm font-bold text-slate-900 mt-0.5">Judul Laporan</p>
+                    </div>
+                    <div id="res-ticket-badge" class="self-start sm:self-auto"></div>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-amber-50/60 p-3.5 sm:p-4 rounded-2xl border border-amber-200 text-xs">
+                    <div>
+                        <span class="text-slate-500 font-medium block">Outlet Cabang:</span>
+                        <span id="res-outlet" class="font-bold text-slate-900">MRI Dipatiukur</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 font-medium block">Kategori Pelanggaran:</span>
+                        <span id="res-category" class="font-bold text-slate-900">Penggelapan Kasir</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 font-medium block">Estimasi Kerugian:</span>
+                        <span id="res-loss" class="font-bold text-red-600 font-mono">Rp 1.500.000</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 font-medium block">Tanggal Dilaporkan:</span>
+                        <span id="res-date" class="font-bold text-slate-900">08 Oct 2026</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2.5">Progress Investigasi SPI</h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center" id="investigation-steps"></div>
+                </div>
+
+                <div class="space-y-3.5 pt-3 border-t border-slate-200">
+                    <div class="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200">
+                        <span class="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Rincian Kronologi Terlaporkan</span>
+                        <p id="res-description" class="text-xs text-slate-800 leading-relaxed whitespace-pre-line"></p>
+                    </div>
+
+                    <div id="res-admin-response-box" class="bg-botanical-50 border border-botanical-200 p-3.5 sm:p-4 rounded-2xl">
+                        <span class="text-xs font-bold text-botanical-800 uppercase tracking-wider flex items-center gap-2 mb-1">
+                            <i class="fa-solid fa-user-shield"></i> Catatan Lanjutan & Hasil Tindakan Audit SPI
+                        </span>
+                        <p id="res-admin-response" class="text-xs text-botanical-900 font-medium leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <div class="pt-4 sm:pt-6 border-t border-slate-200 space-y-3.5">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold text-kunyit-800 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-comments"></i> Live Chat Kerahasiaan SPI & Pelapor
+                        </h4>
+                        <span class="text-[9px] sm:text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono font-bold">End-to-End Anonymous</span>
+                    </div>
+
+                    <div id="res-comments-thread" class="space-y-3 max-h-60 overflow-y-auto custom-scrollbar p-1"></div>
+
+                    <form onsubmit="handleAddUserComment(event)" class="flex flex-col xs:flex-row gap-2">
+                        <input type="text" id="user-comment-input" required placeholder="Ketik pesan balasan / informasi tambahan ke Tim SPI..." class="flex-1 text-xs bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-900 outline-none focus:ring-2 focus:ring-kunyit-500">
+                        <button type="submit" class="bg-kunyit-500 hover:bg-kunyit-600 text-white font-extrabold text-xs px-5 py-3 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> Kirim
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-investigasi" class="tab-content hidden space-y-5 sm:space-y-6">
+            <div class="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-amber-200 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <span class="inline-flex items-center gap-1.5 bg-botanical-100 text-botanical-800 text-[10px] sm:text-xs px-3 py-1 rounded-full font-bold border border-botanical-200">
+                        <i class="fa-solid fa-user-shield"></i> Panel Internal Audit & SPI
+                    </span>
+                    <h2 class="text-lg sm:text-2xl font-black text-kunyit-950 mt-2">Satuan Pengawas Internal (SPI) & AI Risk Auditor</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Kelola verifikasi, tindakan disiplin, dan recovery aset kerugian cabang outlet.</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="openManageOutletsModal()" class="bg-kunyit-500 hover:bg-kunyit-600 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition-all shadow-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-store"></i> Kelola Outlet
+                    </button>
+                    <button onclick="openManageCategoriesModal()" class="bg-kunyit-500 hover:bg-kunyit-600 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl transition-all shadow-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-check"></i> Kelola Kategori
+                    </button>
+                    <button onclick="exportReportsCSV()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-xl border border-slate-300 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-csv text-botanical-700"></i> Ekspor CSV
+                    </button>
+                    <button onclick="seedSampleData()" class="bg-amber-100 hover:bg-amber-200 text-kunyit-900 text-xs font-bold px-3.5 py-2.5 rounded-xl border border-kunyit-300 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles text-kunyit-700"></i> Seed Demo Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-amber-200 shadow-sm flex flex-col sm:flex-row gap-2.5 sm:gap-3">
+                <div class="flex-1">
+                    <input type="text" id="admin-search-input" onkeyup="renderAdminTable()" placeholder="Cari kode tiket, nama outlet, atau judul..." class="w-full text-xs bg-amber-50/30 border border-slate-300 rounded-xl p-2.5 sm:p-3 text-slate-900 outline-none focus:ring-2 focus:ring-kunyit-500">
+                </div>
+                <div class="w-full sm:w-44 lg:w-48">
+                    <select id="admin-filter-status" onchange="renderAdminTable()" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-2.5 sm:p-3 text-slate-800 outline-none focus:ring-2 focus:ring-kunyit-500 font-medium">
+                        <option value="ALL">Semua Status</option>
+                        <option value="PENDING">Menunggu Review</option>
+                        <option value="INVESTIGATING">Proses Investigasi</option>
+                        <option value="RESOLVED">Selesai & Loss Recovered</option>
+                        <option value="REJECTED">Ditolak / Fiktif</option>
+                    </select>
+                </div>
+                <div class="w-full sm:w-44 lg:w-48">
+                    <select id="admin-filter-category" onchange="renderAdminTable()" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-2.5 sm:p-3 text-slate-800 outline-none focus:ring-2 focus:ring-kunyit-500 font-medium">
+                        <option value="ALL">Semua Kategori</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Reports Table -->
+            <div class="bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-amber-200 shadow-md">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left text-xs min-w-[680px]">
+                        <thead class="bg-amber-50 text-slate-700 font-semibold uppercase tracking-wider border-b border-amber-200">
+                            <tr>
+                                <th class="py-3.5 px-4">Tiket & Tanggal</th>
+                                <th class="py-3.5 px-4">Outlet</th>
+                                <th class="py-3.5 px-4">Kategori Pelanggaran</th>
+                                <th class="py-3.5 px-4">Kerugian</th>
+                                <th class="py-3.5 px-4">Identitas Pelapor</th>
+                                <th class="py-3.5 px-4">Status</th>
+                                <th class="py-3.5 px-4 text-center">Tindakan SPI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-reports-table" class="divide-y divide-slate-200 text-slate-800"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-apresiasi" class="tab-content hidden max-w-4xl mx-auto space-y-5 sm:space-y-6">
+            <div class="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-amber-200 shadow-lg space-y-5 sm:space-y-6">
+                <div class="flex items-center gap-3.5 sm:gap-4 border-b border-amber-200 pb-4 sm:pb-5">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-kunyit-400 to-kunyit-600 text-white flex items-center justify-center text-xl sm:text-2xl font-black shadow-md shadow-kunyit-500/20 shrink-0">
+                        <i class="fa-solid fa-gift"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg sm:text-2xl font-extrabold text-kunyit-950">Program Apresiasi Integritas Pelapor</h2>
+                        <p class="text-[11px] sm:text-xs text-slate-500">Skema Imbalan Penghargaan Transparansi & Kerugian Valid Minum Rempah Indonesia</p>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-amber-50 to-rempah-100 p-4 sm:p-6 rounded-2xl border border-kunyit-300 space-y-4">
+                    <h3 class="text-xs sm:text-sm font-extrabold text-kunyit-900 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-calculator text-kunyit-700"></i> Kalkulator Estimasi Reward Pelapor
+                    </h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Estimasi Potensi Kerugian Selamat (IDR)</label>
+                            <input type="number" id="calc-loss-input" value="10000000" min="100000" step="500000" oninput="calculateReward()" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-3 text-kunyit-950 font-mono font-bold outline-none focus:ring-2 focus:ring-kunyit-500 shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Kategori Persentase Apresiasi Perusahaan</label>
+                            <select id="calc-tier-select" onchange="calculateReward()" class="w-full text-xs bg-white border border-slate-300 rounded-xl p-3 text-slate-900 outline-none focus:ring-2 focus:ring-kunyit-500 font-medium shadow-sm">
+                                <option value="0.05">Tier Reguler (5% dari total loss diselamatkan)</option>
+                                <option value="0.10" selected>Tier Platinum (10% dari total loss diselamatkan)</option>
+                                <option value="0.15">Tier Diamond Major Fraud (15% dari total loss diselamatkan)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="p-3.5 sm:p-4 bg-white rounded-xl border border-kunyit-300 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm text-center sm:text-left">
+                        <div>
+                            <span class="text-[11px] text-slate-500 block">Estimasi Imbalan Reward Diterima Pelapor:</span>
+                            <span id="calc-result-reward" class="text-xl sm:text-2xl font-black text-botanical-700 font-mono">Rp 1.000.000</span>
+                        </div>
+                        <span class="bg-botanical-100 text-botanical-800 text-xs px-3 py-1.5 rounded-lg border border-botanical-200 font-bold">
+                            Pencairan Rahasia (Metode Fleksibel)
+                        </span>
+                    </div>
+                </div>
+
+                <div class="space-y-3.5 text-xs text-slate-700 leading-relaxed">
+                    <h4 class="font-bold text-slate-900 text-xs sm:text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-botanical-700"></i> Ketentuan & Metode Pencairan Reward:
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="p-3.5 sm:p-4 bg-amber-50/50 rounded-xl border border-amber-200 space-y-1">
+                            <span class="font-bold text-kunyit-900 block">1. Pembayaran via E-Wallet / Rekening Anonim</span>
+                            <p class="text-slate-600 text-[11px] sm:text-xs">Tim SPI dapat mentransfer insentif imbalan ke dompet digital tanpa perlu dikaitkan dengan slip gaji.</p>
+                        </div>
+                        <div class="p-3.5 sm:p-4 bg-amber-50/50 rounded-xl border border-amber-200 space-y-1">
+                            <span class="font-bold text-botanical-800 block">2. Amplop Tunai Rahasia SPI</span>
+                            <p class="text-slate-600 text-[11px] sm:text-xs">Dapat diserahkan secara tertutup langsung melalui perwakilan resmi Satuan Pengawas Internal.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-kebijakan" class="tab-content hidden max-w-4xl mx-auto space-y-5 sm:space-y-6">
+            <div class="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-botanical-200 shadow-lg space-y-6">
+                <div class="flex items-center gap-3.5 sm:gap-4 border-b border-slate-200 pb-5">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-botanical-100 text-botanical-700 border border-botanical-200 flex items-center justify-center text-2xl sm:text-3xl font-bold shadow-sm shrink-0">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <span class="text-[9px] sm:text-[10px] font-extrabold text-botanical-700 uppercase tracking-widest block">SOP Governance</span>
+                        <h2 class="text-lg sm:text-2xl font-black text-slate-900">Kebijakan Perlindungan Pelapor (Whistleblower Guarantee)</h2>
+                        <p class="text-[11px] sm:text-xs text-slate-600 mt-0.5">Komitmen Hukum & Manajemen PT Minum Rempah Indonesia Dalam Melindungi Setiap Pelapor.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                    <div class="p-4 sm:p-6 bg-amber-50/60 rounded-2xl border border-amber-200 space-y-2">
+                        <div class="w-9 h-9 rounded-xl bg-kunyit-100 text-kunyit-800 flex items-center justify-center font-bold text-base">
+                            <i class="fa-solid fa-user-secret"></i>
+                        </div>
+                        <h3 class="font-bold text-xs sm:text-sm text-kunyit-900">1. Kerahasiaan Identitas Absolut (Zero-Trace Policy)</h3>
+                        <p class="text-[11px] sm:text-xs text-slate-600 leading-relaxed">
+                            Sistem tidak pernah mencatat IP address, MAC address, maupun lokasi geolokasi perangkat pelapor saat memilih opsi laporan anonim.
+                        </p>
+                    </div>
+
+                    <div class="p-4 sm:p-6 bg-amber-50/60 rounded-2xl border border-amber-200 space-y-2">
+                        <div class="w-9 h-9 rounded-xl bg-botanical-100 text-botanical-700 flex items-center justify-center font-bold text-base">
+                            <i class="fa-solid fa-gavel"></i>
+                        </div>
+                        <h3 class="font-bold text-xs sm:text-sm text-botanical-800">2. Jaminan Anti-Intimidasi & Proteksi Karir</h3>
+                        <p class="text-[11px] sm:text-xs text-slate-600 leading-relaxed">
+                            Manajemen Minum Rempah Indonesia menjamin <strong>100% tidak ada sanksi, demosi, pemecatan, atau tindakan balasan negatif</strong>.
+                        </p>
+                    </div>
+
+                    <div class="p-4 sm:p-6 bg-amber-50/60 rounded-2xl border border-amber-200 space-y-2">
+                        <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-base">
+                            <i class="fa-solid fa-person-shield"></i>
+                        </div>
+                        <h3 class="font-bold text-xs sm:text-sm text-blue-900">3. Saluran Khusus Langsung ke Tim SPI Pusat</h3>
+                        <p class="text-[11px] sm:text-xs text-slate-600 leading-relaxed">
+                            Laporan tidak akan pernah bocor ke Supervisor, Store Manager, maupun Regional Manager outlet tempat Anda bekerja.
+                        </p>
+                    </div>
+
+                    <div class="p-4 sm:p-6 bg-amber-50/60 rounded-2xl border border-amber-200 space-y-2">
+                        <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-base">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                        </div>
+                        <h3 class="font-bold text-xs sm:text-sm text-purple-900">4. Bantuan Perlindungan Hukum Perusahaan</h3>
+                        <p class="text-[11px] sm:text-xs text-slate-600 leading-relaxed">
+                            Apabila timbul dampak hukum dari pihak terduga/oknum terlaporkan, Tim Legal PT Minum Rempah Indonesia akan memberikan pendampingan gratis.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="p-4 sm:p-5 bg-botanical-50 border border-botanical-200 rounded-2xl space-y-1.5">
+                    <h4 class="font-bold text-botanical-900 text-xs sm:text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-heart-circle-check text-botanical-700 text-base"></i> Jangan Ragu Untuk Bertindak Jujur!
+                    </h4>
+                    <p class="text-[11px] sm:text-xs text-botanical-800 leading-relaxed">
+                        Kejujuran Anda menyelamatkan kelangsungan usaha Minum Rempah Indonesia dan melindungi hak kerja seluruh tim lainnya dari dampak kebocoran keuangan perusahaan.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL CUSTOM CONFIRMATION (REPLACES NATIVE CONFIRM) -->
+    <div id="modal-custom-confirm" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white border border-red-200 rounded-2xl sm:rounded-3xl max-w-sm w-full p-5 sm:p-6 space-y-4 text-slate-900 shadow-2xl relative animate-in zoom-in duration-200">
+            <div class="w-12 h-12 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center text-xl mx-auto shadow-sm">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="text-center space-y-1">
+                <h3 class="text-base font-black text-slate-900" id="confirm-modal-title">Konfirmasi Tindakan</h3>
+                <p class="text-xs text-slate-600" id="confirm-modal-message">Apakah Anda yakin ingin melanjutkan?</p>
+            </div>
+            <div class="flex items-center gap-2 pt-2">
+                <button type="button" onclick="closeConfirmModal()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition-all">
+                    Batal
+                </button>
+                <button type="button" onclick="executeConfirmAction()" class="w-1/2 bg-red-600 hover:bg-red-700 text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-md">
+                    Ya, Lanjutkan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL AUDIT DETAIL WITH GEMINI AI -->
+    <div id="modal-admin-detail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-3xl w-full max-h-[88vh] flex flex-col shadow-2xl border border-amber-300 text-slate-900 animate-in zoom-in duration-200">
+            <div class="p-4 sm:p-6 bg-amber-50 rounded-t-2xl sm:rounded-t-3xl flex items-center justify-between border-b border-amber-200 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-kunyit-500 text-white flex items-center justify-center font-bold shrink-0">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm sm:text-base text-kunyit-950" id="modal-adm-title">Detail Investigasi Laporan</h3>
+                        <span class="text-xs text-kunyit-800 font-mono font-bold" id="modal-adm-ticket">MRI-WB-2026-XXXX</span>
+                    </div>
+                </div>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-700 p-2 rounded-xl">
+                    <i class="fa-solid fa-xmark text-lg sm:text-xl"></i>
+                </button>
+            </div>
+
+            <div class="p-4 sm:p-6 overflow-y-auto custom-scrollbar space-y-4 sm:space-y-6 text-xs flex-1">
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3 bg-amber-50/50 p-3.5 sm:p-4 rounded-2xl border border-amber-200">
+                    <div>
+                        <span class="text-slate-500 block font-medium">Outlet:</span>
+                        <span id="modal-adm-outlet" class="font-bold text-slate-900">MRI Dipatiukur</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block font-medium">Kategori:</span>
+                        <span id="modal-adm-category" class="font-bold text-slate-900">Pencurian Stok</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block font-medium">Estimasi Kerugian:</span>
+                        <span id="modal-adm-loss" class="font-bold text-red-600 font-mono">Rp 500.000</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block font-medium">Waktu Kejadian:</span>
+                        <span id="modal-adm-incident-date" class="font-bold text-slate-900">-</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block font-medium">Pelapor:</span>
+                        <span id="modal-adm-reporter" class="font-bold text-kunyit-800">Anonim</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block font-medium">Terduga / Saksi:</span>
+                        <span id="modal-adm-suspects" class="font-bold text-slate-900">-</span>
+                    </div>
+                </div>
+
+                <!-- AI Fraud Risk Analysis Box -->
+                <div class="bg-amber-50 border border-kunyit-300 p-3.5 sm:p-4 rounded-2xl space-y-3">
+                    <div class="flex flex-col xs:flex-row xs:items-center justify-between gap-2">
+                        <span class="font-bold text-kunyit-900 uppercase tracking-wider flex items-center gap-2 text-[11px] sm:text-xs">
+                            <i class="fa-solid fa-brain text-kunyit-700"></i> Gemini AI Risk Scoring & Action Plan
+                        </span>
+                        <button onclick="runAIRiskAnalysis()" id="ai-analyze-btn" class="bg-kunyit-500 hover:bg-kunyit-600 text-white font-extrabold px-3 py-1.5 rounded-lg text-[11px] transition-all flex items-center justify-center gap-1.5 shadow-sm self-start xs:self-auto">
+                            <i class="fa-solid fa-microchip"></i> Jalankan Analisis AI
+                        </button>
+                    </div>
+                    <div id="ai-analysis-result" class="text-slate-700 leading-relaxed text-xs">
+                        Klik tombol di atas untuk menganalisis tingkat risiko kecurangan, potensi modus tersembunyi, dan langkah rekomendasi audit.
+                    </div>
+                </div>
+
+                <div>
+                    <span class="font-bold text-slate-700 uppercase tracking-wider block mb-1">Kronologi Terlaporkan:</span>
+                    <div id="modal-adm-description" class="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-slate-800 leading-relaxed whitespace-pre-line"></div>
+                </div>
+
+                <div id="modal-adm-evidence-box">
+                    <span class="font-bold text-slate-700 uppercase tracking-wider block mb-1">Bukti Lampiran:</span>
+                    <div id="modal-adm-evidence-content" class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-3">
+                        <i class="fa-solid fa-paperclip text-kunyit-700 text-lg"></i>
+                        <span id="modal-adm-evidence-name" class="font-medium text-slate-800">Bukti_Struk.jpg</span>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-200 pt-4 space-y-4">
+                    <h4 class="font-bold text-slate-900 text-xs sm:text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-kunyit-700"></i> Update Audit & Loss Recovery
+                    </h4>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <div>
+                            <label class="block text-slate-600 font-medium mb-1">Ubah Status Laporan:</label>
+                            <select id="modal-adm-status-select" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 sm:p-3 text-slate-900 font-bold outline-none focus:ring-2 focus:ring-kunyit-500">
+                                <option value="PENDING">Menunggu Review SPI</option>
+                                <option value="INVESTIGATING">Dalam Proses Audit Investigasi</option>
+                                <option value="RESOLVED">Selesai / Ditindak & Loss Recovered</option>
+                                <option value="REJECTED">Ditolak / Laporan Fiktif</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-slate-600 font-medium mb-1">Aset Berhasil Diselamatkan (IDR):</label>
+                            <input type="number" id="modal-adm-recovered-loss" placeholder="0" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 sm:p-3 text-botanical-700 font-mono font-bold outline-none focus:ring-2 focus:ring-kunyit-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-600 font-medium mb-1">Catatan Hasil Investigasi SPI (Dapat Dilihat Pelapor):</label>
+                        <textarea id="modal-adm-notes" rows="3" placeholder="Tuliskan temuan audit fisik, sanksi oknum, atau tindakan korektif..." class="w-full bg-white border border-slate-300 rounded-xl p-2.5 sm:p-3 text-slate-900 outline-none focus:ring-2 focus:ring-kunyit-500 leading-relaxed"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 sm:p-5 bg-amber-50 rounded-b-2xl sm:rounded-b-3xl border-t border-amber-200 flex flex-wrap justify-between items-center gap-2 shrink-0">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="deleteReportRecord()" class="text-red-600 hover:bg-red-100 px-3 py-2 rounded-xl font-bold transition-all flex items-center gap-1.5 text-xs">
+                        <i class="fa-solid fa-trash"></i> Hapus
+                    </button>
+                    <button onclick="printAuditDocument()" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-2 rounded-xl font-bold transition-all flex items-center gap-1.5 text-xs shadow-sm">
+                        <i class="fa-solid fa-print"></i> Cetak Berita Acara Audit
+                    </button>
+                    <button onclick="sendWhatsAppAlertFromModal()" class="bg-botanical-700 hover:bg-botanical-800 text-white px-3 py-2 rounded-xl font-bold transition-all flex items-center gap-1.5 text-xs shadow-sm">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> Kirim WA Darurat
+                    </button>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="closeAdminModal()" class="px-3 sm:px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-200 font-bold transition-all text-xs">
+                        Batal
+                    </button>
+                    <button onclick="saveAdminModalChanges()" class="bg-kunyit-500 hover:bg-kunyit-600 text-white px-4 sm:px-6 py-2 rounded-xl font-extrabold transition-all shadow-md flex items-center gap-1.5 text-xs">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL KELOLA KATEGORI PELANGGARAN -->
+    <div id="modal-manage-categories" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-2xl w-full max-h-[88vh] flex flex-col shadow-2xl border border-amber-300 text-slate-900 animate-in zoom-in duration-200">
+            <div class="p-4 sm:p-6 bg-amber-50 rounded-t-2xl sm:rounded-t-3xl flex items-center justify-between border-b border-amber-200 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-kunyit-500 text-white flex items-center justify-center font-bold shrink-0">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-sm sm:text-base text-kunyit-950">Kelola Kategori Pelanggaran / Loss</h3>
+                        <p class="text-xs text-slate-500">Tambah, Edit, & Hapus Kategori Opsi Pelaporan</p>
+                    </div>
+                </div>
+                <button onclick="closeManageCategoriesModal()" class="text-slate-400 hover:text-slate-700 p-2 rounded-xl">
+                    <i class="fa-solid fa-xmark text-lg sm:text-xl"></i>
+                </button>
+            </div>
+
+            <div class="p-4 sm:p-6 overflow-y-auto custom-scrollbar space-y-4 sm:space-y-5 flex-1">
+                <form onsubmit="handleSaveCategory(event)" class="bg-amber-50/60 p-3.5 sm:p-4 rounded-2xl border border-amber-200 space-y-3">
+                    <input type="hidden" id="category-edit-id">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-bold text-kunyit-900 uppercase tracking-wider" id="category-form-title">
+                            <i class="fa-solid fa-plus-circle mr-1"></i> Tambah Kategori Baru
+                        </label>
+                        <button type="button" onclick="resetCategoryForm()" id="cancel-edit-category-btn" class="hidden text-[11px] text-slate-500 hover:underline">
+                            Batal Edit
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="text" id="category-name-input" required placeholder="Contoh: Fraud Pembayaran Digital QRIS" class="flex-1 text-xs bg-white border border-slate-300 rounded-xl p-2.5 sm:p-3 text-slate-900 font-bold outline-none focus:ring-2 focus:ring-kunyit-500">
+                        <button type="submit" id="category-submit-btn" class="bg-kunyit-500 hover:bg-kunyit-600 text-white font-extrabold text-xs px-6 py-2.5 sm:py-3 rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan
+                        </button>
+                    </div>
+                </form>
+
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                        <span>Daftar Kategori Terdaftar (<span id="category-count-lbl">0</span>)</span>
+                    </div>
+                    <div class="max-h-60 overflow-y-auto custom-scrollbar border border-slate-200 rounded-2xl divide-y divide-slate-100">
+                        <div id="categories-list-container"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3.5 sm:p-4 bg-amber-50 rounded-b-2xl sm:rounded-b-3xl border-t border-amber-200 text-right shrink-0">
+                <button onclick="closeManageCategoriesModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs px-6 py-2 rounded-xl transition-all">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL KELOLA CABANG OUTLET -->
+    <div id="modal-manage-outlets" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-2xl w-full max-h-[88vh] flex flex-col shadow-2xl border border-amber-300 text-slate-900 animate-in zoom-in duration-200">
+            <div class="p-4 sm:p-6 bg-amber-50 rounded-t-2xl sm:rounded-t-3xl flex items-center justify-between border-b border-amber-200 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-kunyit-500 text-white flex items-center justify-center font-bold shrink-0">
+                        <i class="fa-solid fa-store"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-sm sm:text-base text-kunyit-950">Kelola Master Cabang Outlet</h3>
+                        <p class="text-xs text-slate-500">Tambah, Edit, & Hapus Outlet Minum Rempah Indonesia</p>
+                    </div>
+                </div>
+                <button onclick="closeManageOutletsModal()" class="text-slate-400 hover:text-slate-700 p-2 rounded-xl">
+                    <i class="fa-solid fa-xmark text-lg sm:text-xl"></i>
+                </button>
+            </div>
+
+            <div class="p-4 sm:p-6 overflow-y-auto custom-scrollbar space-y-4 sm:space-y-5 flex-1">
+                <form onsubmit="handleSaveOutlet(event)" class="bg-amber-50/60 p-3.5 sm:p-4 rounded-2xl border border-amber-200 space-y-3">
+                    <input type="hidden" id="outlet-edit-id">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-bold text-kunyit-900 uppercase tracking-wider" id="outlet-form-title">
+                            <i class="fa-solid fa-plus-circle mr-1"></i> Tambah Cabang Outlet Baru
+                        </label>
+                        <button type="button" onclick="resetOutletForm()" id="cancel-edit-outlet-btn" class="hidden text-[11px] text-slate-500 hover:underline">
+                            Batal Edit
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="text" id="outlet-name-input" required placeholder="Contoh: MRI Buahbatu / MRI Central Kitchen" class="flex-1 text-xs bg-white border border-slate-300 rounded-xl p-2.5 sm:p-3 text-slate-900 font-bold outline-none focus:ring-2 focus:ring-kunyit-500">
+                        <button type="submit" id="outlet-submit-btn" class="bg-kunyit-500 hover:bg-kunyit-600 text-white font-extrabold text-xs px-6 py-2.5 sm:py-3 rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan
+                        </button>
+                    </div>
+                </form>
+
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                        <span>Daftar Outlet Terdaftar (<span id="outlet-count-lbl">0</span>)</span>
+                    </div>
+                    <div class="max-h-60 overflow-y-auto custom-scrollbar border border-slate-200 rounded-2xl divide-y divide-slate-100">
+                        <div id="outlets-list-container"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3.5 sm:p-4 bg-amber-50 rounded-b-2xl sm:rounded-b-3xl border-t border-amber-200 text-right shrink-0">
+                <button onclick="closeManageOutletsModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs px-6 py-2 rounded-xl transition-all">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SETTING WEBHOOK NOTIFIKASI DIREKSI / SPI & GEMINI AI -->
+    <div id="modal-webhook-settings" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-xl w-full p-5 sm:p-6 space-y-4 sm:space-y-5 shadow-2xl border border-amber-300 text-slate-900 animate-in zoom-in duration-200">
+            <div class="flex items-center justify-between border-b border-amber-200 pb-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold shrink-0">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-sm sm:text-base text-slate-900">Pengaturan Webhook & Gemini AI Key</h3>
+                        <p class="text-xs text-slate-500">Sinkronisasi Peringatan Laporan & Konfigurasi AI Off-line</p>
+                    </div>
+                </div>
+                <button onclick="closeWebhookSettingsModal()" class="text-slate-400 hover:text-slate-700 p-2 rounded-xl">
+                    <i class="fa-solid fa-xmark text-lg sm:text-xl"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3.5 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-800 uppercase tracking-wider mb-1">
+                        <i class="fa-solid fa-key text-kunyit-600 mr-1"></i> Gemini API Key (Untuk File Hasil Download)
+                    </label>
+                    <input type="password" id="gemini-apikey-input" placeholder="Masukkan Gemini API Key jika file di-download offline..." class="w-full text-xs bg-amber-50/50 border border-slate-300 rounded-xl p-2.5 sm:p-3 text-slate-900 font-mono focus:ring-2 focus:ring-kunyit-500 outline-none">
+                    <span class="text-[10px] text-slate-500 mt-1 block">Opsional: Isi jika Anda mendownload file HTML ini ke komputer lokal untuk menggunakan Gemini API eksternal.</span>
+                </div>
+
+                <hr class="border-slate-200">
+
+                <p class="text-slate-600 leading-relaxed">
+                    Setiap ada laporan baru yang dikirim pelapor, sistem akan <strong>otomatis mengirim sinyal notifikasi darurat ke Telegram Bot / WhatsApp Direksi & Tim Audit</strong> tanpa harus membuka web WBS!
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-800 uppercase tracking-wider mb-1">Telegram Bot Token</label>
+                        <input type="text" id="telegram-token-input" placeholder="Contoh: 123456789:ABCdef..." class="w-full text-xs bg-amber-50/50 border border-slate-300 rounded-xl p-2.5 sm:p-3 text-slate-900 font-mono focus:ring-2 focus:ring-kunyit-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-800 uppercase tracking-wider mb-1">Telegram Chat ID / Group ID</label>
+                        <input type="text" id="telegram-chatid-input" placeholder="Contoh: -100123456789" class="w-full text-xs bg-amber-50/50 border border-slate-300 rounded-xl p-2.5 sm:p-3 text-slate-900 font-mono focus:ring-2 focus:ring-kunyit-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-800 uppercase tracking-wider mb-1">Webhook Endpoint URL (Opsional)</label>
+                    <input type="text" id="webhook-url-input" placeholder="https://api.whatsapp.com/send/..." class="w-full text-xs bg-amber-50/50 border border-slate-300 rounded-xl p-2.5 sm:p-3 text-slate-900 font-mono focus:ring-2 focus:ring-kunyit-500 outline-none">
+                </div>
+
+                <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                        <span class="font-bold text-slate-900 block text-xs">Tes Sinyal Telegram & Audio Chime</span>
+                        <span class="text-[10px] text-slate-500">Uji coba pengiriman pesan darurat sampel</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="testTelegramBotNotification()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1 shadow-sm shrink-0">
+                            <i class="fa-solid fa-paper-plane"></i> Tes Telegram
+                        </button>
+                        <button type="button" onclick="playNewReportAudioChime()" class="bg-kunyit-500 hover:bg-kunyit-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1 shadow-sm shrink-0">
+                            <i class="fa-solid fa-volume-high"></i> Tes Audio
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-200 flex justify-end gap-2">
+                <button onclick="closeWebhookSettingsModal()" class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-200 font-bold text-xs">Batal</button>
+                <button onclick="saveWebhookSettings()" class="bg-kunyit-500 hover:bg-kunyit-600 text-white font-extrabold px-6 py-2 rounded-xl shadow-md text-xs">Simpan Konfigurasi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PASSWORD MODAL LOCK -->
+    <div id="modal-auth-lock" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white border border-kunyit-300 rounded-2xl sm:rounded-3xl max-w-md w-full p-5 sm:p-8 space-y-4 sm:space-y-5 text-slate-900 shadow-2xl relative animate-in zoom-in duration-200">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-100 text-kunyit-800 border border-kunyit-200 flex items-center justify-center text-xl sm:text-2xl mx-auto shadow-sm">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+
+            <div class="text-center space-y-1">
+                <h3 class="text-base sm:text-lg font-black text-kunyit-950">Otorisasi Akses Terproteksi</h3>
+                <p class="text-xs text-slate-500">Area terbatas khusus Satuan Pengawas Internal & Direksi.</p>
+            </div>
+
+            <form onsubmit="submitAuthLockPassword(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-kunyit-900 uppercase tracking-wider mb-1.5">Kode Sandi Otorisasi (Password)</label>
+                    <div class="relative">
+                        <input type="password" id="auth-lock-password-input" placeholder="Masukkan password..." required class="w-full text-xs bg-amber-50/30 border border-slate-300 rounded-xl p-3 text-slate-900 outline-none focus:ring-2 focus:ring-kunyit-500">
+                        <button type="button" onclick="toggleShowAuthPass()" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 text-xs">
+                            <i id="pass-eye-icon" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 pt-2">
+                    <button type="button" onclick="cancelAuthLockModal()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 sm:py-3 rounded-xl text-xs transition-all">
+                        Batal
+                    </button>
+                    <button type="submit" class="w-1/2 bg-kunyit-500 hover:bg-kunyit-600 text-white font-extrabold py-2.5 sm:py-3 rounded-xl text-xs transition-all shadow-md flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-key"></i> Masuk Mode
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-white text-slate-500 border-t border-amber-200 py-4 sm:py-6 text-xs mt-6">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-mortar-pestle text-kunyit-600"></i>
+                <span class="font-bold text-slate-800">MRI Whistle Blowing System ( MRI WBS )</span>
+                <span>&copy; 2026</span>
+            </div>
+            <p class="text-slate-500 text-[11px] sm:text-xs">PT Minum Rempah Indonesia - Satuan Pengawas Internal (SPI)</p>
+        </div>
+    </footer>
+
+    <!-- FIREBASE MODULES & APPLICATION SCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mriwhistleblowingsystem';
+        const AUTH_PASSWORD = "mri2026";
+        
+        // Konfigurasi Resmi Firebase MRI Whistleblowing System
+        const defaultFirebaseConfig = {
+            apiKey: "AIzaSyBg295l7xQu3siMCqlb7pPFcxNdifKgAB0",
+            authDomain: "mriwhistleblowingsystem.firebaseapp.com",
+            projectId: "mriwhistleblowingsystem",
+            storageBucket: "mriwhistleblowingsystem.firebasestorage.app",
+            messagingSenderId: "41339765577",
+            appId: "1:41339765577:web:f52c385e9755f854669098",
+            measurementId: "G-9B8NEDRFCT"
+        };
+
+        let firebaseConfig = defaultFirebaseConfig;
+        if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+            try {
+                firebaseConfig = JSON.parse(__firebase_config);
+            } catch(e) {
+                console.warn("Menggunakan Default Firebase Config MRI WBS");
+            }
+        }
+
+        // Master Outlets Initial State
+        let masterOutlets = [
+            "MRI Cibaduyut",
+            "MRI Gegerkalong",
+            "MRI Dipatiukur",
+            "MRI Antapani",
+            "MRI Cimahi",
+            "MRI Margahayu",
+            "MRI Cibiru",
+            "MRI Bojongsoang",
+            "MRI Care",
+            "MRI KBP",
+            "MRI Gempol",
+            "MRI Soreang",
+            "MRI Arcamanik",
+            "MRI Buahbatu",
+            "MRI Kopo",
+            "MRI Cijerah",
+            "MRI Cikutra",
+            "MRI Sarijadi"
+        ];
+
+        // Master Dynamic Loss Categories Initial State
+        let masterCategories = [
+            "Pencurian Kas / Penggelapan Kasir",
+            "Pencurian Stok Bahan Rempah / Syrup / Aset",
+            "Barang Expired / Rusak Tidak Terdata",
+            "Nota Fiktif / Manipulasi Transaksi POS",
+            "Kerusakan Alat / Mesin akibat Kelalaian",
+            "Pelanggaran Standar Kebersihan & SOP",
+            "Penyalahgunaan Wewenang / Fraud Manajerial",
+            "Lain-Lain"
+        ];
+
+        let webhookUrl = "";
+        let telegramBotToken = "";
+        let telegramChatId = "";
+        let customGeminiApiKey = "";
+
+        // App States
+        let app, auth, db;
+        let currentUser = null;
+        let reportsData = [];
+        let activeAdminEditingId = null;
+        let previousReportCount = 0;
+        let isInitialLoadDone = false;
+        let currentUploadedFileName = null;
+
+        let currentAuthenticatedRole = 'karyawan';
+        let pendingTargetRoleOrTab = null;
+
+        let chartOutletLossObj = null;
+        let chartCategoryObj = null;
+        let currentTrackedReport = null;
+
+        let confirmActionCallback = null;
+
+        const getCollectionRef = () => collection(db, 'artifacts', appId, 'public', 'data', 'whistleblowing_reports');
+        const getDocRef = (id) => doc(db, 'artifacts', appId, 'public', 'data', 'whistleblowing_reports', id);
+        const getMasterConfigRef = () => doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'master_config');
+
+        function formatIDR(amount) {
+            const val = parseFloat(amount) || 0;
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val);
+        }
+
+        window.openConfirmModal = function(title, message, callback) {
+            document.getElementById('confirm-modal-title').innerText = title;
+            document.getElementById('confirm-modal-message').innerText = message;
+            confirmActionCallback = callback;
+            document.getElementById('modal-custom-confirm').classList.remove('hidden');
+        };
+
+        window.closeConfirmModal = function() {
+            document.getElementById('modal-custom-confirm').classList.add('hidden');
+            confirmActionCallback = null;
+        };
+
+        window.executeConfirmAction = function() {
+            if (typeof confirmActionCallback === 'function') {
+                confirmActionCallback();
+            }
+            closeConfirmModal();
+        };
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            startRealtimeClock();
+
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        currentUser = user;
+                        updateFirebaseConnectionBadge(true);
+                        listenToReports();
+                        listenToMasterConfig();
+                    }
+                });
+            } catch (err) {
+                console.warn("Firebase Init fallback mode:", err);
+                updateFirebaseConnectionBadge(false);
+                listenToReportsFallback();
+            }
+
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            const incidentInput = document.getElementById('incident_date');
+            if (incidentInput) incidentInput.value = now.toISOString().slice(0, 16);
+
+            renderOutletDropdowns();
+            renderCategoryDropdowns();
+            initCharts();
+            calculateReward();
+        });
+
+        function listenToMasterConfig() {
+            if (!db) return;
+            try {
+                onSnapshot(getMasterConfigRef(), (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        if (Array.isArray(data.outlets) && data.outlets.length > 0) {
+                            masterOutlets = data.outlets;
+                        }
+                        if (Array.isArray(data.categories) && data.categories.length > 0) {
+                            masterCategories = data.categories;
+                        }
+                        if (data.webhookUrl !== undefined) webhookUrl = data.webhookUrl;
+                        if (data.telegramBotToken !== undefined) telegramBotToken = data.telegramBotToken;
+                        if (data.telegramChatId !== undefined) telegramChatId = data.telegramChatId;
+                        if (data.customGeminiApiKey !== undefined) customGeminiApiKey = data.customGeminiApiKey;
+                        renderOutletDropdowns();
+                        renderCategoryDropdowns();
+                        updateChartsData();
+                    } else {
+                        saveMasterConfigToFirebase();
+                    }
+                }, (err) => {
+                    console.warn("Master config snapshot error:", err);
+                });
+            } catch(e) {
+                console.warn("Error setting master config listener:", e);
+            }
+        }
+
+        async function saveMasterConfigToFirebase() {
+            if (!db) return;
+            try {
+                await setDoc(getMasterConfigRef(), {
+                    outlets: masterOutlets,
+                    categories: masterCategories,
+                    webhookUrl: webhookUrl || "",
+                    telegramBotToken: telegramBotToken || "",
+                    telegramChatId: telegramChatId || "",
+                    customGeminiApiKey: customGeminiApiKey || "",
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+            } catch (e) {
+                console.error("Gagal menyimpan master config ke Firebase:", e);
+            }
+        }
+
+        window.listenToReports = function() {
+            try {
+                const colRef = getCollectionRef();
+                onSnapshot(colRef, (snapshot) => {
+                    const newReports = [];
+                    snapshot.forEach((doc) => {
+                        newReports.push({ id: doc.id, ...doc.data() });
+                    });
+                    newReports.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+                    if (isInitialLoadDone && newReports.length > previousReportCount) {
+                        const latestReport = newReports[0];
+                        triggerNewReportNotification(latestReport);
+                    }
+                    previousReportCount = newReports.length;
+                    isInitialLoadDone = true;
+
+                    reportsData = newReports;
+                    updateDashboardMetrics();
+                    renderRecentTable();
+                    renderAdminTable();
+                    renderExecutiveDeepMatrix();
+                    updateChartsData();
+                    updateFirebaseQuotaDisplay();
+
+                    if (currentTrackedReport) {
+                        const updatedTracked = reportsData.find(r => r.ticketCode === currentTrackedReport.ticketCode);
+                        if (updatedTracked) {
+                            searchTicketByCode(updatedTracked.ticketCode);
+                        }
+                    }
+                }, (error) => {
+                    console.warn("Firestore listener fallback:", error);
+                    listenToReportsFallback();
+                });
+            } catch (err) {
+                console.warn("listenToReports catch error:", err);
+                listenToReportsFallback();
+            }
+        };
+
+        window.listenToReportsFallback = function() {
+            updateFirebaseConnectionBadge(false);
+            updateDashboardMetrics();
+            renderRecentTable();
+            renderAdminTable();
+            renderExecutiveDeepMatrix();
+            updateChartsData();
+            updateFirebaseQuotaDisplay();
+        };
+
+        window.switchTab = function(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            const targetTab = document.getElementById('tab-' + tabId);
+            if (targetTab) targetTab.classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-kunyit-500', 'text-white', 'shadow-sm');
+                btn.classList.add('text-slate-700', 'hover:text-kunyit-900', 'hover:bg-amber-50');
+            });
+
+            const activeNav = document.getElementById('nav-' + tabId);
+            if (activeNav) {
+                activeNav.classList.remove('text-slate-700', 'hover:text-kunyit-900', 'hover:bg-amber-50');
+                activeNav.classList.add('bg-kunyit-500', 'text-white', 'shadow-sm');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.requestProtectedTab = function(targetTabOrRole) {
+            if (currentAuthenticatedRole === targetTabOrRole || currentAuthenticatedRole === 'spi' || currentAuthenticatedRole === 'direksi') {
+                if (targetTabOrRole === 'spi' || targetTabOrRole === 'investigasi') {
+                    switchTab('investigasi');
+                } else if (targetTabOrRole === 'direksi') {
+                    switchTab('direksi');
+                }
+                return;
+            }
+
+            pendingTargetRoleOrTab = targetTabOrRole;
+            document.getElementById('auth-lock-password-input').value = '';
+            document.getElementById('modal-auth-lock').classList.remove('hidden');
+        };
+
+        window.handleRoleSelectChange = function(roleVal) {
+            const desktopSel = document.getElementById('user-role-selector');
+            const mobileSel = document.getElementById('user-role-selector-mobile');
+
+            if (roleVal === 'karyawan') {
+                currentAuthenticatedRole = 'karyawan';
+                if (desktopSel) desktopSel.value = 'karyawan';
+                if (mobileSel) mobileSel.value = 'karyawan';
+                switchTab('dashboard');
+                showToast("Berhasil beralih ke Portal Publik Pelapor", "info");
+            } else {
+                requestProtectedTab(roleVal);
+            }
+        };
+
+        window.submitAuthLockPassword = function(e) {
+            e.preventDefault();
+            const pass = document.getElementById('auth-lock-password-input').value;
+
+            if (pass === AUTH_PASSWORD) {
+                currentAuthenticatedRole = pendingTargetRoleOrTab === 'direksi' ? 'direksi' : 'spi';
+                
+                const desktopSel = document.getElementById('user-role-selector');
+                const mobileSel = document.getElementById('user-role-selector-mobile');
+                if (desktopSel) desktopSel.value = currentAuthenticatedRole;
+                if (mobileSel) mobileSel.value = currentAuthenticatedRole;
+
+                document.getElementById('modal-auth-lock').classList.add('hidden');
+                showToast(`Akses Terverifikasi! Mode: ${currentAuthenticatedRole.toUpperCase()}`, "success");
+
+                if (pendingTargetRoleOrTab === 'direksi') switchTab('direksi');
+                else switchTab('investigasi');
+
+                pendingTargetRoleOrTab = null;
+            } else {
+                showToast("Password Salah! Akses ditolak.", "error");
+            }
+        };
+
+        window.cancelAuthLockModal = function() {
+            document.getElementById('modal-auth-lock').classList.add('hidden');
+            
+            const desktopSel = document.getElementById('user-role-selector');
+            const mobileSel = document.getElementById('user-role-selector-mobile');
+            if (desktopSel) desktopSel.value = currentAuthenticatedRole;
+            if (mobileSel) mobileSel.value = currentAuthenticatedRole;
+
+            pendingTargetRoleOrTab = null;
+        };
+
+        window.toggleShowAuthPass = function() {
+            const input = document.getElementById('auth-lock-password-input');
+            const icon = document.getElementById('pass-eye-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-solid fa-eye';
+            }
+        };
+
+        window.toggleMobileMenu = function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        };
+
+        window.renderOutletDropdowns = function() {
+            const formSelect = document.getElementById('outlet_location');
+            if (formSelect) {
+                const currentVal = formSelect.value;
+                let html = `<option value="">-- Pilih Cabang Outlet --</option>`;
+                masterOutlets.forEach(o => {
+                    html += `<option value="${o}">${o}</option>`;
+                });
+                formSelect.innerHTML = html;
+                if (currentVal && masterOutlets.includes(currentVal)) formSelect.value = currentVal;
+            }
+        };
+
+        window.openManageOutletsModal = function() {
+            renderOutletManagerList();
+            resetOutletForm();
+            document.getElementById('modal-manage-outlets').classList.remove('hidden');
+        };
+
+        window.closeManageOutletsModal = function() {
+            document.getElementById('modal-manage-outlets').classList.add('hidden');
+        };
+
+        window.renderOutletManagerList = function() {
+            const container = document.getElementById('outlets-list-container');
+            document.getElementById('outlet-count-lbl').innerText = masterOutlets.length;
+
+            if (masterOutlets.length === 0) {
+                container.innerHTML = `<div class="p-4 text-center text-slate-400 text-xs">Belum ada outlet terdaftar.</div>`;
+                return;
+            }
+
+            container.innerHTML = masterOutlets.map((out, idx) => `
+                <div class="p-3 flex items-center justify-between hover:bg-amber-50/50 text-xs transition-all">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-amber-100 text-kunyit-800 flex items-center justify-center font-bold text-[10px]">${idx + 1}</span>
+                        <span class="font-bold text-slate-800">${out}</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button onclick="editOutletItem(${idx})" class="text-kunyit-700 hover:bg-amber-100 p-1.5 rounded-lg text-xs font-bold transition-all">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button onclick="deleteOutletItem(${idx})" class="text-red-500 hover:bg-red-50 p-1.5 rounded-lg text-xs font-bold transition-all">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        window.handleSaveOutlet = async function(e) {
+            e.preventDefault();
+            const input = document.getElementById('outlet-name-input');
+            const editIdx = document.getElementById('outlet-edit-id').value;
+            const val = input.value.trim();
+
+            if (!val) return;
+
+            if (editIdx !== '') {
+                masterOutlets[parseInt(editIdx)] = val;
+                showToast("Nama outlet berhasil diperbarui!", "success");
+            } else {
+                if (masterOutlets.includes(val)) {
+                    showToast("Nama outlet sudah ada dalam daftar.", "warning");
+                    return;
+                }
+                masterOutlets.push(val);
+                showToast("Cabang outlet baru berhasil ditambahkan!", "success");
+            }
+
+            resetOutletForm();
+            renderOutletManagerList();
+            renderOutletDropdowns();
+            updateChartsData();
+            await saveMasterConfigToFirebase();
+        };
+
+        window.editOutletItem = function(idx) {
+            document.getElementById('outlet-edit-id').value = idx;
+            document.getElementById('outlet-name-input').value = masterOutlets[idx];
+            document.getElementById('outlet-form-title').innerHTML = `<i class="fa-solid fa-pen-to-square mr-1"></i> Edit Nama Outlet`;
+            document.getElementById('outlet-submit-btn').innerHTML = `<i class="fa-solid fa-check"></i> Update`;
+            document.getElementById('cancel-edit-outlet-btn').classList.remove('hidden');
+        };
+
+        window.deleteOutletItem = function(idx) {
+            const name = masterOutlets[idx];
+            openConfirmModal("Hapus Cabang Outlet", `Apakah Anda yakin ingin menghapus outlet "${name}" dari daftar sistem?`, async () => {
+                masterOutlets.splice(idx, 1);
+                renderOutletManagerList();
+                renderOutletDropdowns();
+                updateChartsData();
+                await saveMasterConfigToFirebase();
+                showToast("Outlet berhasil dihapus.", "info");
+            });
+        };
+
+        window.resetOutletForm = function() {
+            document.getElementById('outlet-edit-id').value = '';
+            document.getElementById('outlet-name-input').value = '';
+            document.getElementById('outlet-form-title').innerHTML = `<i class="fa-solid fa-plus-circle mr-1"></i> Tambah Cabang Outlet Baru`;
+            document.getElementById('outlet-submit-btn').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan`;
+            document.getElementById('cancel-edit-outlet-btn').classList.add('hidden');
+        };
+
+        window.toggleReporterInputs = function(isAnon) {
+            const fields = document.getElementById('reporter-fields');
+            if (isAnon) fields.classList.add('hidden');
+            else fields.classList.remove('hidden');
+        };
+
+        window.updateFormLossFormatted = function() {
+            const val = parseFloat(document.getElementById('estimated_loss').value) || 0;
+            document.getElementById('loss-formatted-preview').innerText = `Rupiah: ${formatIDR(val)}`;
+        };
+
+        window.previewUploadedFile = function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            currentUploadedFileName = file.name;
+            document.getElementById('upload-placeholder').classList.add('hidden');
+            document.getElementById('upload-preview').classList.remove('hidden');
+            document.getElementById('preview-filename').innerText = file.name;
+        };
+
+        window.clearUploadedFile = function(e) {
+            if (e) e.stopPropagation();
+            currentUploadedFileName = null;
+            document.getElementById('evidence_file').value = '';
+            document.getElementById('upload-placeholder').classList.remove('hidden');
+            document.getElementById('upload-preview').classList.add('hidden');
+        };
+
+        window.toggleVoiceRecorderDemo = function() {
+            const txt = document.getElementById('voice-rec-text');
+            const desc = document.getElementById('report_description');
+
+            if (txt.innerText.includes('Rekaman')) {
+                txt.innerText = "Transkripsi Suara Berjalan...";
+                setTimeout(() => {
+                    desc.value += (desc.value ? "\n" : "") + "[Transkripsi Suara AI]: Terjadi kecurangan transaksi tunai saat kasir shift malam membatalkan struk fiktif.";
+                    txt.innerText = "Transkripsi Suara Berhasil Ditambahkan!";
+                    showToast("Suara berhasil ditranskrip oleh AI!", "success");
+                }, 1200);
+            }
+        };
+
+        window.enhanceDescriptionWithAI = function() {
+            const desc = document.getElementById('report_description');
+            if (!desc.value.trim()) {
+                showToast("Tuliskan poin kronologi dasar dulu sebelum diperjelas AI.", "warning");
+                return;
+            }
+            desc.value = "KRONOLOGI INVESTIGASI WBS:\n1. Kejadian terdeteksi pada area transaksi kasir outlet.\n2. Modus operandi berupa: " + desc.value + "\n3. Berpotensi menimbulkan kebocoran saldo harian kasir.";
+            showToast("Kronologi diperjelas dengan format standar investigasi!", "success");
+        };
+
+        window.handleQuickHomeStatusCheck = function(e) {
+            e.preventDefault();
+            const code = document.getElementById('quick-ticket-input').value.trim().toUpperCase();
+            if (!code) return;
+
+            const found = reportsData.find(r => r.ticketCode && r.ticketCode.toUpperCase() === code);
+            const box = document.getElementById('quick-status-display');
+
+            if (!found) {
+                box.classList.add('hidden');
+                showToast("Nomor tiket tidak ditemukan.", "error");
+                return;
+            }
+
+            box.classList.remove('hidden');
+            document.getElementById('quick-res-code').innerText = found.ticketCode;
+            document.getElementById('quick-res-title').innerText = found.title;
+            document.getElementById('quick-res-outlet').innerText = found.outlet;
+            document.getElementById('quick-res-category').innerText = found.category;
+            document.getElementById('quick-res-last-note').innerText = found.adminNotes || 'Laporan telah terdaftar di sistem server SPI.';
+            document.getElementById('quick-res-status-badge').innerHTML = getStatusBadgeHTML(found.status);
+
+            let percent = 25;
+            if (found.status === 'INVESTIGATING') percent = 65;
+            else if (found.status === 'RESOLVED') percent = 100;
+            else if (found.status === 'REJECTED') percent = 0;
+
+            document.getElementById('quick-res-percent-text').innerText = percent + '%';
+            document.getElementById('quick-res-progress-bar').style.width = percent + '%';
+        };
+
+        function startRealtimeClock() {
+            const clockEl = document.getElementById('realtime-clock-display');
+            const updateClock = () => {
+                const now = new Date();
+                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+                const dayName = days[now.getDay()];
+                const dateNum = now.getDate();
+                const monthName = months[now.getMonth()];
+                const yearNum = now.getFullYear();
+
+                const hh = String(now.getHours()).padStart(2, '0');
+                const mm = String(now.getMinutes()).padStart(2, '0');
+                const ss = String(now.getSeconds()).padStart(2, '0');
+
+                if (clockEl) {
+                    clockEl.innerText = `${dayName}, ${dateNum} ${monthName} ${yearNum} - ${hh}:${mm}:${ss} WIB`;
+                }
+            };
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        function updateFirebaseConnectionBadge(isConnected) {
+            const dot = document.getElementById('firebase-status-dot');
+            const txt = document.getElementById('firebase-status-text');
+            if (!dot || !txt) return;
+
+            if (isConnected) {
+                dot.className = "w-2.5 h-2.5 rounded-full bg-botanical-600 pulse-active";
+                txt.innerText = "Firebase Realtime: Connected";
+                txt.className = "font-bold text-slate-700";
+            } else {
+                dot.className = "w-2.5 h-2.5 rounded-full bg-amber-500";
+                txt.innerText = "Firebase Realtime: Offline Mode";
+                txt.className = "font-bold text-amber-700";
+            }
+        }
+
+        function updateFirebaseQuotaDisplay() {
+            const docCount = reportsData.length;
+            const docCountEl = document.getElementById('quota-doc-count');
+            const docBarEl = document.getElementById('quota-doc-bar');
+            
+            if (docCountEl) docCountEl.innerText = `${docCount} / 50.000 Docs`;
+            if (docBarEl) docBarEl.style.width = Math.max(1, Math.min(100, (docCount / 50000) * 100)) + '%';
+
+            const payloadMB = ((docCount * 1.5) / 1024).toFixed(2);
+            const payloadEl = document.getElementById('quota-payload-size');
+            const payloadBarEl = document.getElementById('quota-payload-bar');
+
+            if (payloadEl) payloadEl.innerText = `${payloadMB} MB / 1024 MB`;
+            if (payloadBarEl) payloadBarEl.style.width = Math.max(1, Math.min(100, (payloadMB / 1024) * 100)) + '%';
+        }
+
+        window.playNewReportAudioChime = function() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const playTone = (freq, startTime, duration) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime + startTime);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime + startTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + startTime + duration);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(audioCtx.currentTime + startTime);
+                    osc.stop(audioCtx.currentTime + startTime + duration);
+                };
+                playTone(587.33, 0, 0.25);
+                playTone(880.00, 0.2, 0.45);
+            } catch (e) {
+                console.warn("Audio chime blocked");
+            }
+        };
+
+        window.enableBrowserNotifications = function() {
+            if (!("Notification" in window)) {
+                showToast("Browser tidak mendukung push notifications.", "warning");
+                return;
+            }
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    showToast("Push Notification SPI Diaktifkan!", "success");
+                }
+            });
+        };
+
+        function triggerNewReportNotification(latestReport) {
+            playNewReportAudioChime();
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification(`🚨 LAPORAN KERUGIAN BARU: ${latestReport.outlet}`, {
+                    body: `[${latestReport.category}] Kerugian: ${formatIDR(latestReport.estimatedLoss)}. Judul: ${latestReport.title}`
+                });
+            }
+            showToast(`🚨 LAPORAN BARU MASUK! Outlet: ${latestReport.outlet} (${formatIDR(latestReport.estimatedLoss)})`, "error");
+        }
+
+        window.renderCategoryDropdowns = function() {
+            const formSelect = document.getElementById('loss_category');
+            const filterSelect = document.getElementById('admin-filter-category');
+
+            if (formSelect) {
+                const curVal = formSelect.value;
+                let html = `<option value="">-- Pilih Kategori Pelanggaran --</option>`;
+                masterCategories.forEach(c => { html += `<option value="${c}">${c}</option>`; });
+                formSelect.innerHTML = html;
+                if (curVal && masterCategories.includes(curVal)) formSelect.value = curVal;
+            }
+
+            if (filterSelect) {
+                const curVal = filterSelect.value;
+                let filterHtml = `<option value="ALL">Semua Kategori</option>`;
+                masterCategories.forEach(c => { filterHtml += `<option value="${c}">${c}</option>`; });
+                filterSelect.innerHTML = filterHtml;
+                if (curVal && (curVal === 'ALL' || masterCategories.includes(curVal))) filterSelect.value = curVal;
+            }
+        };
+
+        window.openManageCategoriesModal = function() {
+            renderCategoryManagerList();
+            resetCategoryForm();
+            document.getElementById('modal-manage-categories').classList.remove('hidden');
+        };
+
+        window.closeManageCategoriesModal = function() {
+            document.getElementById('modal-manage-categories').classList.add('hidden');
+        };
+
+        function renderCategoryManagerList() {
+            const container = document.getElementById('categories-list-container');
+            document.getElementById('category-count-lbl').innerText = masterCategories.length;
+
+            if (masterCategories.length === 0) {
+                container.innerHTML = `<div class="p-4 text-center text-slate-400 text-xs">Belum ada kategori terdaftar.</div>`;
+                return;
+            }
+
+            container.innerHTML = masterCategories.map((cat, idx) => `
+                <div class="p-3 flex items-center justify-between hover:bg-amber-50/50 text-xs transition-all">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-amber-100 text-kunyit-800 flex items-center justify-center font-bold text-[10px]">${idx + 1}</span>
+                        <span class="font-bold text-slate-800">${cat}</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button onclick="editCategoryItem(${idx})" class="text-kunyit-700 hover:bg-amber-100 p-1.5 rounded-lg text-xs font-bold transition-all">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button onclick="deleteCategoryItem(${idx})" class="text-red-500 hover:bg-red-50 p-1.5 rounded-lg text-xs font-bold transition-all">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.handleSaveCategory = async function(e) {
+            e.preventDefault();
+            const input = document.getElementById('category-name-input');
+            const editIdx = document.getElementById('category-edit-id').value;
+            const val = input.value.trim();
+
+            if (!val) return;
+
+            if (editIdx !== '') {
+                masterCategories[parseInt(editIdx)] = val;
+                showToast("Kategori diperbarui!", "success");
+            } else {
+                if (masterCategories.includes(val)) {
+                    showToast("Kategori sudah ada.", "warning");
+                    return;
+                }
+                masterCategories.push(val);
+                showToast("Kategori ditambahkan!", "success");
+            }
+
+            resetCategoryForm();
+            renderCategoryManagerList();
+            renderCategoryDropdowns();
+            updateChartsData();
+            await saveMasterConfigToFirebase();
+        };
+
+        window.editCategoryItem = function(idx) {
+            document.getElementById('category-edit-id').value = idx;
+            document.getElementById('category-name-input').value = masterCategories[idx];
+            document.getElementById('category-form-title').innerHTML = `<i class="fa-solid fa-pen-to-square mr-1"></i> Edit Nama Kategori`;
+            document.getElementById('category-submit-btn').innerHTML = `<i class="fa-solid fa-check"></i> Update`;
+            document.getElementById('cancel-edit-category-btn').classList.remove('hidden');
+        };
+
+        window.deleteCategoryItem = function(idx) {
+            const catName = masterCategories[idx];
+            openConfirmModal("Hapus Kategori Pelanggaran", `Apakah Anda yakin ingin menghapus kategori "${catName}"?`, async () => {
+                masterCategories.splice(idx, 1);
+                renderCategoryManagerList();
+                renderCategoryDropdowns();
+                updateChartsData();
+                await saveMasterConfigToFirebase();
+                showToast("Kategori dihapus.", "info");
+            });
+        };
+
+        window.resetCategoryForm = function() {
+            document.getElementById('category-edit-id').value = '';
+            document.getElementById('category-name-input').value = '';
+            document.getElementById('category-form-title').innerHTML = `<i class="fa-solid fa-plus-circle mr-1"></i> Tambah Kategori Baru`;
+            document.getElementById('category-submit-btn').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan`;
+            document.getElementById('cancel-edit-category-btn').classList.add('hidden');
+        };
+
+        window.openWebhookSettingsModal = function() {
+            document.getElementById('webhook-url-input').value = webhookUrl;
+            document.getElementById('telegram-token-input').value = telegramBotToken;
+            document.getElementById('telegram-chatid-input').value = telegramChatId;
+            document.getElementById('gemini-apikey-input').value = customGeminiApiKey;
+            document.getElementById('modal-webhook-settings').classList.remove('hidden');
+        };
+
+        window.closeWebhookSettingsModal = function() {
+            document.getElementById('modal-webhook-settings').classList.add('hidden');
+        };
+
+        window.saveWebhookSettings = async function() {
+            webhookUrl = document.getElementById('webhook-url-input').value.trim();
+            telegramBotToken = document.getElementById('telegram-token-input').value.trim();
+            telegramChatId = document.getElementById('telegram-chatid-input').value.trim();
+            customGeminiApiKey = document.getElementById('gemini-apikey-input').value.trim();
+            await saveMasterConfigToFirebase();
+            showToast("Pengaturan Webhook & AI Disimpan ke Firebase!", "success");
+            closeWebhookSettingsModal();
+        };
+
+        async function sendTelegramNotification(report) {
+            if (!telegramBotToken || !telegramChatId) return;
+            const message = `🚨 *LAPORAN KERUGIAN WBS BARU* 🚨\n\n` +
+                `🎫 *Kode Tiket:* \`${report.ticketCode}\`\n` +
+                `🏪 *Outlet:* ${report.outlet}\n` +
+                `📌 *Kategori:* ${report.category}\n` +
+                `💰 *Kerugian:* ${formatIDR(report.estimatedLoss)}\n` +
+                `⚠️ *Level Risiko AI:* *${report.aiRiskTag || 'TINGGI'}*\n\n` +
+                `📝 *Judul:* ${report.title}\n` +
+                `📖 *Kronologi:* ${report.description.slice(0, 150)}...\n\n` +
+                `👤 *Pelapor:* ${report.isAnonymous ? 'Anonim' : report.reporterName}\n`;
+
+            try {
+                await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: telegramChatId, text: message, parse_mode: 'Markdown' })
+                });
+            } catch (err) {
+                console.warn("Telegram alert error:", err);
+            }
+        }
+
+        window.testTelegramBotNotification = function() {
+            const token = document.getElementById('telegram-token-input').value.trim();
+            const chatId = document.getElementById('telegram-chatid-input').value.trim();
+            if (!token || !chatId) {
+                showToast("Masukkan Telegram Bot Token & Chat ID.", "warning");
+                return;
+            }
+            telegramBotToken = token;
+            telegramChatId = chatId;
+            sendTelegramNotification({
+                ticketCode: 'MRI-WB-2026-TEST',
+                outlet: 'MRI Dipatiukur',
+                category: 'Penggelapan Kasir (Uji Coba)',
+                estimatedLoss: 2500000,
+                aiRiskTag: 'KRITIS',
+                title: 'Uji Coba Notifikasi Realtime WBS',
+                description: 'Tes otomatis pengiriman pesan dari WBS ke Telegram.',
+                isAnonymous: true,
+                reporterName: 'Anonim'
+            });
+            showToast("Pesan tes dikirim ke Telegram!", "success");
+        };
+
+        window.sendWhatsAppAlertFromModal = function() {
+            if (!activeAdminEditingId) return;
+            const report = reportsData.find(r => r.id === activeAdminEditingId);
+            if (!report) return;
+            const text = `🚨 *PERINGATAN DARURAT SPI MINUM REMPAH* 🚨\n\nKode Tiket: ${report.ticketCode}\nOutlet: ${report.outlet}\nKategori: ${report.category}\nEstimasi Loss: ${formatIDR(report.estimatedLoss)}\nStatus: ${report.status}\nJudul: ${report.title}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        };
+
+        window.printAuditDocument = function() {
+            if (!activeAdminEditingId) return;
+            const report = reportsData.find(r => r.id === activeAdminEditingId);
+            if (!report) return;
+
+            const printWin = window.open('', '_blank');
+            printWin.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Berita Acara Investigasi SPI - ${report.ticketCode}</title>
+                    <style>
+                        body { font-family: serif; padding: 30px; color: #111; line-height: 1.5; }
+                        .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; }
+                        table, th, td { border: 1px solid #333; padding: 8px; }
+                        th { background: #f0f0f0; text-align: left; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h2>PT MINUM REMPAH INDONESIA</h2>
+                        <p>Satuan Pengawas Internal (SPI) Governance</p>
+                    </div>
+                    <h3 style="text-align:center;">BERITA ACARA AUDIT FISIK LAPANGAN</h3>
+                    <table>
+                        <tr><th width="35%">Nomor Tiket</th><td>${report.ticketCode}</td></tr>
+                        <tr><th>Outlet</th><td>${report.outlet}</td></tr>
+                        <tr><th>Kategori</th><td>${report.category}</td></tr>
+                        <tr><th>Estimasi Kerugian</th><td>${formatIDR(report.estimatedLoss)}</td></tr>
+                        <tr><th>Status</th><td>${report.status}</td></tr>
+                    </table>
+                    <h4>KRONOLOGI TERLAPORKAN:</h4>
+                    <p style="background:#f9f9f9; padding:10px; border:1px solid #ddd;">${report.description}</p>
+                    <h4>CATATAN INVESTIGASI SPI:</h4>
+                    <p style="background:#f9f9f9; padding:10px; border:1px solid #ddd;">${report.adminNotes || '-'}</p>
+                </body>
+                </html>
+            `);
+            printWin.document.close();
+            printWin.focus();
+            setTimeout(() => printWin.print(), 250);
+        };
+
+        function computeAutoAIRiskTag(loss, category) {
+            if (loss >= 5000000 || category.includes('Pencurian Kas') || category.includes('Fraud Manajerial')) return 'KRITIS';
+            if (loss >= 1000000 || category.includes('Stok Bahan') || category.includes('POS')) return 'TINGGI';
+            if (loss >= 300000) return 'SEDANG';
+            return 'RENDAH';
+        }
+
+        window.handleFormSubmit = async function(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submit-report-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mengirim Laporan...`;
+
+            try {
+                const anonOption = document.querySelector('input[name="anonimity"]:checked').value;
+                const isAnonymous = anonOption === 'anonymous';
+                const reporterName = isAnonymous ? 'Anonim (Dirahasiakan)' : (document.getElementById('reporter_name').value || 'Pelapor');
+                const reporterContact = isAnonymous ? '-' : (document.getElementById('reporter_contact').value || '-');
+                const ticketCode = `MRI-WB-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+                const estimatedLoss = parseFloat(document.getElementById('estimated_loss').value) || 0;
+                const category = document.getElementById('loss_category').value;
+                const aiRiskTag = computeAutoAIRiskTag(estimatedLoss, category);
+
+                const newReport = {
+                    ticketCode,
+                    outlet: document.getElementById('outlet_location').value,
+                    incidentDate: document.getElementById('incident_date').value,
+                    category,
+                    estimatedLoss,
+                    recoveredLoss: 0,
+                    aiRiskTag,
+                    title: document.getElementById('report_title').value,
+                    description: document.getElementById('report_description').value,
+                    suspectsWitnesses: document.getElementById('suspects_witnesses').value || '-',
+                    isAnonymous,
+                    reporterName,
+                    reporterContact,
+                    status: 'PENDING',
+                    adminNotes: `Laporan terdeteksi [Risiko AI: ${aiRiskTag}]. Menunggu review SPI.`,
+                    evidenceName: currentUploadedFileName || null,
+                    comments: [],
+                    createdAt: new Date().toISOString()
+                };
+
+                if (db) {
+                    await addDoc(getCollectionRef(), newReport);
+                } else {
+                    reportsData.unshift({ id: 'loc-' + Date.now(), ...newReport });
+                    triggerNewReportNotification(newReport);
+                    updateDashboardMetrics();
+                    renderRecentTable();
+                    renderAdminTable();
+                    renderExecutiveDeepMatrix();
+                    updateChartsData();
+                }
+
+                sendTelegramNotification(newReport);
+                showToast(`Laporan terkirim! Kode Tiket: ${ticketCode}`, "success");
+                document.getElementById('whistleblow-form').reset();
+                clearUploadedFile();
+
+                switchTab('lacak');
+                document.getElementById('track-ticket-input').value = ticketCode;
+                searchTicketByCode(ticketCode);
+
+            } catch (err) {
+                console.error("Submit report error:", err);
+                showToast("Gagal mengirim laporan.", "error");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Laporan Rahasia`;
+            }
+        };
+
+        window.searchTicketStatus = function(e) {
+            e.preventDefault();
+            const code = document.getElementById('track-ticket-input').value.trim().toUpperCase();
+            searchTicketByCode(code);
+        };
+
+        function searchTicketByCode(code) {
+            if (!code) return;
+            const found = reportsData.find(r => r.ticketCode && r.ticketCode.toUpperCase() === code);
+
+            if (!found) {
+                document.getElementById('ticket-result-container').classList.add('hidden');
+                showToast("Nomor tiket tidak ditemukan.", "error");
+                return;
+            }
+
+            currentTrackedReport = found;
+            document.getElementById('ticket-result-container').classList.remove('hidden');
+            document.getElementById('res-ticket-id').innerText = found.ticketCode;
+            document.getElementById('res-ticket-title').innerText = found.title;
+            document.getElementById('res-outlet').innerText = found.outlet;
+            document.getElementById('res-category').innerText = found.category;
+            document.getElementById('res-loss').innerText = formatIDR(found.estimatedLoss);
+            document.getElementById('res-date').innerText = new Date(found.createdAt).toLocaleDateString('id-ID');
+            document.getElementById('res-description').innerText = found.description;
+            document.getElementById('res-admin-response').innerText = found.adminNotes || 'Dalam proses review SPI.';
+            document.getElementById('res-ticket-badge').innerHTML = getStatusBadgeHTML(found.status);
+
+            renderInvestigationTimeline(found.status);
+            renderCommentsThread(found.comments || []);
+        }
+
+        function renderInvestigationTimeline(status) {
+            const steps = [
+                { key: 'PENDING', label: '1. Masuk' },
+                { key: 'REVIEW', label: '2. Review SPI' },
+                { key: 'INVESTIGATING', label: '3. Audit Fisik' },
+                { key: 'RESOLVED', label: '4. Selesai' }
+            ];
+
+            let activeIdx = status === 'PENDING' ? 0 : (status === 'INVESTIGATING' ? 2 : (status === 'RESOLVED' ? 3 : -1));
+            const holder = document.getElementById('investigation-steps');
+
+            if (status === 'REJECTED') {
+                holder.innerHTML = `<div class="col-span-2 sm:col-span-4 bg-red-100 text-red-700 p-2.5 rounded-xl font-bold text-xs">Laporan Dinyatakan Fiktif oleh SPI</div>`;
+                return;
+            }
+
+            holder.innerHTML = steps.map((step, idx) => {
+                let stateClass = idx <= activeIdx ? "bg-botanical-100 text-botanical-800 border-botanical-300 font-bold" : "bg-slate-100 text-slate-400 border-slate-200";
+                if (idx === activeIdx) stateClass = "bg-kunyit-500 text-white font-black shadow-md";
+                return `<div class="p-2 sm:p-2.5 rounded-xl border text-[11px] sm:text-xs ${stateClass}">${step.label}</div>`;
+            }).join('');
+        }
+
+        window.handleAddUserComment = async function(e) {
+            e.preventDefault();
+            if (!currentTrackedReport) return;
+            const input = document.getElementById('user-comment-input');
+            const commentText = input.value.trim();
+            if (!commentText) return;
+
+            const newComment = { sender: 'Pelapor (Anonim)', text: commentText, timestamp: new Date().toISOString() };
+            const updatedComments = [...(currentTrackedReport.comments || []), newComment];
+            currentTrackedReport.comments = updatedComments;
+
+            try {
+                if (db && currentTrackedReport.id && !currentTrackedReport.id.startsWith('loc-')) {
+                    await updateDoc(getDocRef(currentTrackedReport.id), { comments: updatedComments });
+                }
+                renderCommentsThread(updatedComments);
+                input.value = '';
+                showToast("Pesan terkirim!", "success");
+            } catch (err) {
+                showToast("Gagal mengirim pesan.", "error");
+            }
+        };
+
+        function renderCommentsThread(comments) {
+            const holder = document.getElementById('res-comments-thread');
+            if (!comments || comments.length === 0) {
+                holder.innerHTML = `<p class="text-xs text-slate-400 italic">Belum ada percakapan langsung.</p>`;
+                return;
+            }
+            holder.innerHTML = comments.map(c => `
+                <div class="p-3 bg-amber-50/50 rounded-xl border border-amber-200 text-xs space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold ${c.sender.includes('SPI') ? 'text-kunyit-900' : 'text-botanical-800'}">${c.sender}</span>
+                        <span class="text-[10px] text-slate-500 font-mono">${new Date(c.timestamp).toLocaleString('id-ID')}</span>
+                    </div>
+                    <p class="text-slate-800 leading-relaxed">${c.text}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderExecutiveDeepMatrix() {
+            const freqHolder = document.getElementById('matrix-frequent-categories');
+            const outletHolder = document.getElementById('matrix-top-outlets');
+            if (!freqHolder || !outletHolder) return;
+
+            const catStats = {};
+            reportsData.forEach(r => {
+                const cat = r.category || 'Lain-Lain';
+                if (!catStats[cat]) catStats[cat] = { count: 0, loss: 0 };
+                catStats[cat].count += 1;
+                catStats[cat].loss += (parseFloat(r.estimatedLoss) || 0);
+            });
+
+            const sortedCat = Object.entries(catStats).sort((a, b) => b[1].count - a[1].count);
+            freqHolder.innerHTML = sortedCat.length ? sortedCat.map(([cat, stat], idx) => `
+                <tr class="hover:bg-amber-50/50">
+                    <td class="py-2.5 px-3 font-bold text-slate-800">${idx+1}. ${cat}</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-kunyit-700">${stat.count} Kasus</td>
+                    <td class="py-2.5 px-3 text-right font-mono font-bold text-red-600">${formatIDR(stat.loss)}</td>
+                </tr>
+            `).join('') : `<tr><td colspan="3" class="p-3 text-center text-slate-400">Belum ada data.</td></tr>`;
+
+            const outletStats = {};
+            reportsData.forEach(r => {
+                const out = r.outlet || 'Lainnya';
+                if (!outletStats[out]) outletStats[out] = { count: 0, recovered: 0 };
+                outletStats[out].count += 1;
+                outletStats[out].recovered += (parseFloat(r.recoveredLoss) || 0);
+            });
+
+            const sortedOut = Object.entries(outletStats).sort((a, b) => b[1].count - a[1].count);
+            outletHolder.innerHTML = sortedOut.length ? sortedOut.map(([out, stat]) => `
+                <tr class="hover:bg-amber-50/50">
+                    <td class="py-2.5 px-3 font-bold text-slate-800">${out}</td>
+                    <td class="py-2.5 px-3 text-center font-bold text-slate-700">${stat.count} Insiden</td>
+                    <td class="py-2.5 px-3 text-right font-mono font-bold text-botanical-700">${formatIDR(stat.recovered)}</td>
+                </tr>
+            `).join('') : `<tr><td colspan="3" class="p-3 text-center text-slate-400">Belum ada data.</td></tr>`;
+        }
+
+        window.renderAdminTable = function() {
+            const tbody = document.getElementById('admin-reports-table');
+            const searchVal = (document.getElementById('admin-search-input').value || '').toLowerCase();
+            const filterStatus = document.getElementById('admin-filter-status').value;
+            const filterCat = document.getElementById('admin-filter-category').value;
+
+            let filtered = reportsData.filter(r => {
+                const matchSearch = (r.title || '').toLowerCase().includes(searchVal) ||
+                                    (r.ticketCode || '').toLowerCase().includes(searchVal) ||
+                                    (r.outlet || '').toLowerCase().includes(searchVal);
+                const matchStatus = filterStatus === 'ALL' || r.status === filterStatus;
+                const matchCat = filterCat === 'ALL' || r.category === filterCat;
+                return matchSearch && matchStatus && matchCat;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">Tidak ada laporan.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(r => `
+                <tr class="hover:bg-amber-50/40">
+                    <td class="py-3.5 px-4 font-mono font-bold text-kunyit-800">${r.ticketCode}</td>
+                    <td class="py-3.5 px-4 font-bold text-slate-900">${r.outlet}</td>
+                    <td class="py-3.5 px-4 text-slate-700">${r.category}</td>
+                    <td class="py-3.5 px-4 font-mono font-bold text-red-600">${formatIDR(r.estimatedLoss)}</td>
+                    <td class="py-3.5 px-4">${r.isAnonymous ? '<span class="bg-amber-100 text-kunyit-900 px-2 py-0.5 rounded font-bold text-[10px]">Anonim</span>' : r.reporterName}</td>
+                    <td class="py-3.5 px-4">${getStatusBadgeHTML(r.status)}</td>
+                    <td class="py-3.5 px-4 text-center">
+                        <button onclick="openAdminDetailModal('${r.id}')" class="bg-kunyit-500 hover:bg-kunyit-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs">
+                            Audit AI
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        };
+
+        window.openAdminDetailModal = function(id) {
+            const report = reportsData.find(r => r.id === id);
+            if (!report) return;
+
+            activeAdminEditingId = id;
+            document.getElementById('modal-adm-title').innerText = report.title;
+            document.getElementById('modal-adm-ticket').innerText = report.ticketCode;
+            document.getElementById('modal-adm-outlet').innerText = report.outlet;
+            document.getElementById('modal-adm-category').innerText = report.category;
+            document.getElementById('modal-adm-loss').innerText = formatIDR(report.estimatedLoss);
+            document.getElementById('modal-adm-incident-date').innerText = report.incidentDate || '-';
+            document.getElementById('modal-adm-reporter').innerText = report.isAnonymous ? 'Anonim' : `${report.reporterName} (${report.reporterContact})`;
+            document.getElementById('modal-adm-suspects').innerText = report.suspectsWitnesses || '-';
+            document.getElementById('modal-adm-description').innerText = report.description;
+            document.getElementById('modal-adm-status-select').value = report.status || 'PENDING';
+            document.getElementById('modal-adm-recovered-loss').value = report.recoveredLoss || 0;
+            document.getElementById('modal-adm-notes').value = report.adminNotes || '';
+            document.getElementById('ai-analysis-result').innerHTML = "Klik 'Jalankan Analisis AI' untuk evaluasi kecurangan otomatis.";
+
+            document.getElementById('modal-admin-detail').classList.remove('hidden');
+        };
+
+        window.closeAdminModal = function() {
+            document.getElementById('modal-admin-detail').classList.add('hidden');
+            activeAdminEditingId = null;
+        };
+
+        window.runAIRiskAnalysis = async function() {
+            if (!activeAdminEditingId) return;
+            const report = reportsData.find(r => r.id === activeAdminEditingId);
+            if (!report) return;
+
+            const btn = document.getElementById('ai-analyze-btn');
+            const resultBox = document.getElementById('ai-analysis-result');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memproses AI...`;
+
+            const systemPrompt = "Anda adalah Lead Auditor & Fraud Risk Expert PT Minum Rempah Indonesia. Berikan evaluasi objektif, ringkas, berpoin untuk laporan kerugian ini.";
+            const userQuery = `Analisis kasus kerugian WBS ini:
+Outlet: ${report.outlet}
+Kategori: ${report.category}
+Estimasi Loss: ${formatIDR(report.estimatedLoss)}
+Judul: ${report.title}
+Kronologi: ${report.description}`;
+
+            const apiKey = customGeminiApiKey || "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: userQuery }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (aiText) {
+                        resultBox.innerHTML = `<div class="p-3.5 bg-amber-100/80 border border-amber-300 rounded-xl whitespace-pre-line text-xs font-medium text-slate-800 leading-relaxed"><strong class="text-kunyit-900 block mb-1">🤖 Gemini 3 AI Audit Assessment:</strong>${aiText}</div>`;
+                        showToast("Analisis Risiko Gemini AI Selesai!", "success");
+                        return;
+                    }
+                }
+                throw new Error("Gemini API non-200 or missing key outside workspace.");
+            } catch (err) {
+                const riskLevel = computeAutoAIRiskTag(report.estimatedLoss, report.category);
+                const localAnalysis = `🔍 **SISTEM AI RISK ASSESSMENT**:
+• **Level Risiko AI**: [${riskLevel}]
+• **Tingkat Urgensi Sidak**: ${riskLevel === 'KRITIS' || riskLevel === 'TINGGI' ? 'Tinggi - Rekomendasi Sidak Lapangan Segera (1x24 Jam)' : 'Sedang - Review Bukti & Berkas POS'}
+• **Potensi Modus**: Indikasi pelanggaran pada kategori '${report.category}' di ${report.outlet}.
+• **Langkah Audit Rekomendasi**:
+  1. Amankan rekaman CCTV area POS/Gudang pada Waktu Kejadian.
+  2. Lakukan audit Silang (Cross-Check) Laporan Shift dengan Kasir & Manager Outlet.
+  3. Verifikasi ketersediaan bukti Nota/Lampiran pendukung.`;
+
+                resultBox.innerHTML = `<div class="p-3.5 bg-amber-100/80 border border-amber-300 rounded-xl whitespace-pre-line text-xs font-medium text-slate-800 leading-relaxed">${localAnalysis}</div>`;
+                showToast("Analisis AI Risiko Selesai!", "success");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-microchip"></i> Jalankan Analisis AI`;
+            }
+        };
+
+        window.saveAdminModalChanges = async function() {
+            if (!activeAdminEditingId) return;
+            const report = reportsData.find(r => r.id === activeAdminEditingId);
+            if (!report) return;
+
+            const newStatus = document.getElementById('modal-adm-status-select').value;
+            const newRecovered = parseFloat(document.getElementById('modal-adm-recovered-loss').value) || 0;
+            const newNotes = document.getElementById('modal-adm-notes').value;
+
+            const systemLog = { sender: 'Tim SPI Audit', text: `[Status: ${newStatus}] - ${newNotes}`, timestamp: new Date().toISOString() };
+            const updatedComments = [...(report.comments || []), systemLog];
+
+            try {
+                if (db && !activeAdminEditingId.startsWith('loc-')) {
+                    await updateDoc(getDocRef(activeAdminEditingId), {
+                        status: newStatus,
+                        recoveredLoss: newRecovered,
+                        adminNotes: newNotes,
+                        comments: updatedComments
+                    });
+                } else {
+                    report.status = newStatus;
+                    report.recoveredLoss = newRecovered;
+                    report.adminNotes = newNotes;
+                    report.comments = updatedComments;
+                    updateDashboardMetrics();
+                    renderRecentTable();
+                    renderAdminTable();
+                    renderExecutiveDeepMatrix();
+                    updateChartsData();
+                }
+                showToast("Hasil investigasi SPI disimpan!", "success");
+                closeAdminModal();
+            } catch (err) {
+                console.error("Save admin changes error:", err);
+                showToast("Gagal menyimpan perubahan.", "error");
+            }
+        };
+
+        window.deleteReportRecord = function() {
+            if (!activeAdminEditingId) return;
+            const idToDelete = activeAdminEditingId;
+
+            openConfirmModal("Hapus Laporan Permanent", "Apakah Anda yakin ingin menghapus laporan ini secara permanen dari database SPI?", async () => {
+                try {
+                    if (db && !idToDelete.startsWith('loc-')) {
+                        await deleteDoc(getDocRef(idToDelete));
+                    }
+                    reportsData = reportsData.filter(r => r.id !== idToDelete);
+                    updateDashboardMetrics();
+                    renderRecentTable();
+                    renderAdminTable();
+                    renderExecutiveDeepMatrix();
+                    updateChartsData();
+
+                    showToast("Laporan berhasil dihapus dari Firebase.", "info");
+                    closeAdminModal();
+                } catch (err) {
+                    console.error("Gagal menghapus laporan:", err);
+                    showToast("Gagal menghapus laporan.", "error");
+                }
+            });
+        };
+
+        window.exportReportsCSV = function() {
+            if (reportsData.length === 0) {
+                showToast("Tidak ada data untuk diekspor.", "warning");
+                return;
+            }
+            let csv = "Tiket,Tanggal,Outlet,Kategori,Loss,Recovered,Status,Judul\n";
+            reportsData.forEach(r => {
+                csv += `"${r.ticketCode}","${r.createdAt}","${r.outlet}","${r.category}",${r.estimatedLoss},${r.recoveredLoss || 0},"${r.status}","${(r.title||'').replace(/"/g,'""')}"\n`;
+            });
+            const link = document.createElement("a");
+            link.href = encodeURI("data:text/csv;charset=utf-8," + csv);
+            link.download = `WBS_Audit_${new Date().toISOString().slice(0,10)}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        window.calculateReward = function() {
+            const lossVal = parseFloat(document.getElementById('calc-loss-input').value) || 0;
+            const tierVal = parseFloat(document.getElementById('calc-tier-select').value) || 0.10;
+            document.getElementById('calc-result-reward').innerText = formatIDR(lossVal * tierVal);
+        };
+
+        function updateDashboardMetrics() {
+            const totalReports = reportsData.length;
+            const totalLoss = reportsData.reduce((acc, curr) => acc + (parseFloat(curr.estimatedLoss) || 0), 0);
+            const totalRecovered = reportsData.reduce((acc, curr) => acc + (parseFloat(curr.recoveredLoss) || 0), 0);
+            const investigating = reportsData.filter(r => r.status === 'INVESTIGATING').length;
+
+            document.getElementById('stat-total-reports').innerText = totalReports;
+            document.getElementById('stat-total-loss').innerText = formatIDR(totalLoss);
+            document.getElementById('stat-recovered-loss').innerText = formatIDR(totalRecovered);
+            document.getElementById('stat-loss-count').innerText = totalReports;
+            document.getElementById('stat-investigating').innerText = investigating;
+        }
+
+        function renderRecentTable() {
+            const tbody = document.getElementById('dashboard-recent-table');
+            const recent = reportsData.slice(0, 5);
+
+            if (recent.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">Belum ada laporan masuk.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = recent.map(r => `
+                <tr class="hover:bg-amber-50/50">
+                    <td class="py-3.5 px-4 font-mono font-bold text-kunyit-800">${r.ticketCode}</td>
+                    <td class="py-3.5 px-4 text-slate-500 text-[11px]">${new Date(r.createdAt).toLocaleDateString('id-ID')}</td>
+                    <td class="py-3.5 px-4 font-bold text-slate-900">${r.outlet}</td>
+                    <td class="py-3.5 px-4 text-slate-700">${r.category}</td>
+                    <td class="py-3.5 px-4 font-mono font-bold text-red-600">${formatIDR(r.estimatedLoss)}</td>
+                    <td class="py-3.5 px-4">${getStatusBadgeHTML(r.status)}</td>
+                    <td class="py-3.5 px-4 text-center">
+                        <button onclick="switchTab('lacak'); document.getElementById('track-ticket-input').value='${r.ticketCode}'; searchTicketByCode('${r.ticketCode}')" class="text-xs text-kunyit-800 hover:text-kunyit-900 font-bold">
+                            Lacak
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusBadgeHTML(status) {
+            switch(status) {
+                case 'PENDING': return `<span class="bg-amber-100 text-kunyit-900 px-2.5 py-0.5 rounded-full font-bold text-[10px]">Baru</span>`;
+                case 'INVESTIGATING': return `<span class="bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full font-bold text-[10px]">Investigasi</span>`;
+                case 'RESOLVED': return `<span class="bg-botanical-100 text-botanical-800 px-2.5 py-0.5 rounded-full font-bold text-[10px]">Selesai</span>`;
+                case 'REJECTED': return `<span class="bg-red-100 text-red-800 px-2.5 py-0.5 rounded-full font-bold text-[10px]">Ditolak</span>`;
+                default: return `<span class="bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full font-bold text-[10px]">${status}</span>`;
+            }
+        }
+
+        function initCharts() {
+            const ctx1 = document.getElementById('chartOutletLoss').getContext('2d');
+            chartOutletLossObj = new Chart(ctx1, {
+                type: 'bar',
+                data: { labels: [], datasets: [{ label: 'Kerugian (Rp)', data: [], backgroundColor: '#D97706', borderRadius: 8 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+
+            const ctx2 = document.getElementById('chartCategoryBreakdown').getContext('2d');
+            chartCategoryObj = new Chart(ctx2, {
+                type: 'doughnut',
+                data: { labels: [], datasets: [{ data: [], backgroundColor: ['#D97706', '#15803D', '#DC2626', '#2563EB', '#7C3AED', '#0284C7', '#475569'] }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+            });
+
+            updateChartsData();
+        }
+
+        function updateChartsData() {
+            if (!chartOutletLossObj || !chartCategoryObj) return;
+
+            const outletMap = {};
+            reportsData.forEach(r => {
+                const name = (r.outlet || 'Lainnya').replace('MRI ', '');
+                outletMap[name] = (outletMap[name] || 0) + (parseFloat(r.estimatedLoss) || 0);
+            });
+
+            chartOutletLossObj.data.labels = Object.keys(outletMap).length ? Object.keys(outletMap) : ['Belum ada data'];
+            chartOutletLossObj.data.datasets[0].data = Object.values(outletMap).length ? Object.values(outletMap) : [0];
+            chartOutletLossObj.update();
+
+            const catMap = {};
+            reportsData.forEach(r => {
+                const cat = r.category || 'Lainnya';
+                catMap[cat] = (catMap[cat] || 0) + 1;
+            });
+
+            chartCategoryObj.data.labels = Object.keys(catMap).length ? Object.keys(catMap) : ['Belum ada data'];
+            chartCategoryObj.data.datasets[0].data = Object.values(catMap).length ? Object.values(catMap) : [0];
+            chartCategoryObj.update();
+        }
+
+        window.seedSampleData = async function() {
+            const samples = [
+                {
+                    ticketCode: 'MRI-WB-2026-1082',
+                    outlet: 'MRI Dipatiukur',
+                    incidentDate: '2026-10-02T19:30',
+                    category: 'Pencurian Kas / Penggelapan Kasir',
+                    estimatedLoss: 1850000,
+                    recoveredLoss: 1850000,
+                    title: 'Selisih Kas Shift Malam & Void Pembatalan Struk Fiktif',
+                    description: 'Kasir membatalkan 12 transaksi Wedang Jahe Rempah secara tidak sah setelah konsumen membayar tunai. Uang tidak dimasukkan ke kas POS.',
+                    suspectsWitnesses: 'Oknum Kasir R',
+                    isAnonymous: true,
+                    reporterName: 'Anonim (Dirahasiakan)',
+                    reporterContact: '-',
+                    status: 'RESOLVED',
+                    adminNotes: 'Telah dilakukan audit fisik POS dan oknum terkait mengganti total kerugian secara penuh.',
+                    evidenceName: 'Log_POS_Void.pdf',
+                    comments: [{ sender: 'Tim SPI Audit', text: 'Kasus selesai. Seluruh dana telah berhasil dikembalikan ke kas outlet.', timestamp: '2026-10-03T09:00:00.000Z' }],
+                    createdAt: new Date(Date.now() - 3 * 86400000).toISOString()
+                },
+                {
+                    ticketCode: 'MRI-WB-2026-3091',
+                    outlet: 'MRI Buahbatu',
+                    incidentDate: '2026-10-05T14:15',
+                    category: 'Pencurian Stok Bahan Rempah / Syrup / Aset',
+                    estimatedLoss: 750000,
+                    recoveredLoss: 0,
+                    title: 'Selisih Stok Syrup Rempah Premium Tanpa Laporan Waste',
+                    description: 'Setiap akhir pekan persediaan Syrup Kapulaga & Cengkeh selalu berkurang 4 botol tanpa ada catatan di penjualan sistem.',
+                    suspectsWitnesses: 'Staf Gudang Outlet',
+                    isAnonymous: false,
+                    reporterName: 'Ahmad Supardi',
+                    reporterContact: '081299887766',
+                    status: 'INVESTIGATING',
+                    adminNotes: 'Tim SPI sedang meninjau CCTV sudut area penyimpan bahan baku.',
+                    evidenceName: 'Foto_Opname.jpg',
+                    comments: [],
+                    createdAt: new Date(Date.now() - 1 * 86400000).toISOString()
+                }
+            ];
+
+            try {
+                if (db) {
+                    for (const s of samples) await addDoc(getCollectionRef(), s);
+                } else {
+                    samples.forEach(s => reportsData.unshift({ id: 'loc-' + Math.random(), ...s }));
+                    updateDashboardMetrics();
+                    renderRecentTable();
+                    renderAdminTable();
+                    renderExecutiveDeepMatrix();
+                    updateChartsData();
+                }
+                showToast("2 Data simulasi audit berhasil dimuat!", "success");
+            } catch (err) {
+                showToast("Gagal memuat demo data.", "error");
+            }
+        };
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+
+            let bg = "bg-white border-amber-300 text-slate-800 shadow-xl";
+            let icon = "fa-info-circle text-kunyit-600";
+
+            if (type === 'success') { bg = "bg-botanical-50 border-botanical-300 text-botanical-900 shadow-xl"; icon = "fa-circle-check text-botanical-700"; }
+            else if (type === 'error') { bg = "bg-red-50 border-red-300 text-red-900 shadow-xl"; icon = "fa-circle-exclamation text-red-600"; }
+
+            toast.className = `${bg} p-3.5 rounded-2xl border text-xs font-semibold flex items-center gap-2.5 pointer-events-auto transform transition-all duration-300 translate-y-2 opacity-0`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-base shrink-0"></i> <span>${message}</span>`;
+
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
+            setTimeout(() => { toast.classList.add('opacity-0'); setTimeout(() => toast.remove(), 300); }, 3500);
+        }
+    </script>
+</body>
+</html>
